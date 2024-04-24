@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://dxbnql6sria8m"]
+
+[ext_resource type="Texture2D" uid="uid://cq22mue7gbvre" path="res://Kenny_platformer/Tilesheet/tilesheet_complete.png" id="1_2o2uv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrhna"]
+atlas = ExtResource("1_2o2uv")
+region = Rect2(1152, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15u8m"]
+atlas = ExtResource("1_2o2uv")
+region = Rect2(1216, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qn4e4"]
+atlas = ExtResource("1_2o2uv")
+region = Rect2(1280, 512, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b6g4b"]
+atlas = ExtResource("1_2o2uv")
+region = Rect2(1344, 512, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_whrk6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xrhna")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_15u8m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qn4e4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b6g4b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w8nxe"]
+size = Vector2(66, 62)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_whrk6")
+autoplay = "default"
+frame = 3
+frame_progress = 1.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_w8nxe")
