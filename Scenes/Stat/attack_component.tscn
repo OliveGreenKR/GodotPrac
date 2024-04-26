@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://07m04r4hy7ol"]
+
+[ext_resource type="Script" path="res://Scripts/Contents/Stat/AttackComponent.cs" id="1_kyrm8"]
+
+[node name="AttackComponent" type="Node"]
+script = ExtResource("1_kyrm8")
+Attack = 10

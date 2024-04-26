@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://btqurcawcq0wo"]
 
-[ext_resource type="TileSet" uid="uid://di14t8jp4oehk" path="res://Kenny_platformer/TileSet/TM_ground.tres" id="1_y6hdh"]
+[ext_resource type="TileSet" uid="uid://di14t8jp4oehk" path="res://Art/Tile/TileSet/TM_ground.tres" id="1_y6hdh"]
 
 [node name="TileMap" type="TileMap"]
 tile_set = ExtResource("1_y6hdh")

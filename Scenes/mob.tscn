@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://cx4j116npx0qw"]
 
 [ext_resource type="Script" path="res://Scripts/Contents/Mob.cs" id="1_odrvl"]
-[ext_resource type="Texture2D" uid="uid://bo0ostj42p3qe" path="res://Kenny_platformer/PNG/Enemies/enemySwimming_2.png" id="2_q3vif"]
-[ext_resource type="Script" path="res://Scripts/Contents/UI_HpBar.cs" id="3_0vq1n"]
-[ext_resource type="PackedScene" uid="uid://cosggg5gfgkkv" path="res://Scenes/Components/health_component.tscn" id="3_va64j"]
-[ext_resource type="PackedScene" uid="uid://07m04r4hy7ol" path="res://Scenes/Components/attack_component.tscn" id="4_cvv2a"]
+[ext_resource type="Texture2D" uid="uid://bo0ostj42p3qe" path="res://Art/Enemies/enemySwimming_2.png" id="2_q3vif"]
+[ext_resource type="Script" path="res://Scripts/Contents/UI/UI_HpBar.cs" id="3_0vq1n"]
+[ext_resource type="PackedScene" uid="uid://cosggg5gfgkkv" path="res://Scenes/Stat/health_component.tscn" id="3_va64j"]
+[ext_resource type="PackedScene" uid="uid://07m04r4hy7ol" path="res://Scenes/Stat/attack_component.tscn" id="4_cvv2a"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dt6c7"]
 radius = 7.31261

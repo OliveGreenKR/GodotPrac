@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://ybc3jvrh5w2v"]
+
+[ext_resource type="Texture2D" uid="uid://i67c7gosnm76" path="res://Art/Players/Player Blue/playerBlue_walk2.png" id="1_s4phw"]
+[ext_resource type="Script" path="res://Scripts/Contents/Tower.cs" id="2_udpki"]
+[ext_resource type="PackedScene" uid="uid://cx4j116npx0qw" path="res://Scenes/mob.tscn" id="3_a6e10"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Tower" type="Sprite2D" parent="."]
+position = Vector2(141, 324)
+scale = Vector2(2.01111, 2.01111)
+texture = ExtResource("1_s4phw")
+script = ExtResource("2_udpki")
+
+[node name="Timer" type="Timer" parent="Tower"]
+
+[node name="Mob" parent="." instance=ExtResource("3_a6e10")]
+position = Vector2(990, 334)
+scale = Vector2(-3, 3)
