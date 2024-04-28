@@ -5,63 +5,102 @@ using System.Linq;
 
 public class DelaunayTriangulation
 {
-    /// <summary>
-    /// Make Array of Vector2 to List of Triangle
-    /// </summary>
-    public static List<Triangle> Triangulate(Vector2I[] points)
+    public static List<Triangle> Triangulate(List<Point> points)
     {
         List<Triangle> triangles = new List<Triangle>();
 
-        foreach (Vector2 p in points)
+        // Create a sweep event queue
+        List<Event> events = new List<Event>();
+
+        // Add all points to the event queue
+        foreach (Point p in points)
         {
-            foreach (Vector2 q in points.Where(x => x != p))
+            events.Add(new Event(p, 0));
+        }
+
+        // Sort the event queue by y-coordinate
+        events.Sort((a, b) => a.Point.Y.CompareTo(b.Point.Y));
+
+        // Process the event queue
+        while (events.Count > 0)
+        {
+            Event e = events.First();
+            events.RemoveAt(0);
+
+            // Find the point with the smallest y-coordinate
+            Point p = e.Point;
+            Point q = null;
+            Point r = null;
+
+            // Find the points that are to the right of p
+            foreach (Event ne in events)
             {
-                foreach (Vector2 r in points.Where(x => x != p && x != q))
+                if (ne.Point.Y == p.Y)
                 {
-                    Triangle t = new Triangle(p, q, r);
-                    if (IsDelaunay(t))
+                    if (ne.Point.X > p.X)
                     {
-                        triangles.Add(t);
+                        q = ne.Point;
+                    }
+                    else
+                    {
+                        r = ne.Point;
                     }
                 }
+            }
+
+            // Create a new triangle
+            Triangle t = new Triangle(p, q, r);
+            triangles.Add(t);
+
+            // Add new events to the queue
+            if (q != null)
+            {
+                events.Add(new Event(q, 1));
+            }
+            if (r != null)
+            {
+                events.Add(new Event(r, 1));
             }
         }
 
         return triangles;
     }
+}
 
-    private static bool IsDelaunay(Triangle t)
+public class Point
+{
+    public double X { get; set; }
+    public double Y { get; set; }
+
+    public Point(double x, double y)
     {
-        Vector2 p = t.P;
-        Vector2 q = t.Q;
-        Vector2 r = t.R;
-
-        // Check if the circumcircle of pqr is empty
-        double d = (q.X - p.X) * (r.Y - p.Y) - (q.Y - p.Y) * (r.X - p.X);
-        double r2 = (q.X - p.X) * (q.X - p.X) + (q.Y - p.Y) * (q.Y - p.Y);
-        double r1 = (r.X - p.X) * (r.X - p.X) + (r.Y - p.Y) * (r.Y - p.Y);
-        double r0 = (q.X - p.X) * (r.Y - p.Y) - (q.Y - p.Y) * (r.X - p.X);
-
-        if (d < 0) return true; // circumcircle is empty
-
-        // Check if the circumcircle of pqr is empty
-        double r = Math.Sqrt(r2 + r1 - 2 * r0);
-        if (r < 0.0001) return true; // circumcircle is empty
-
-        return false; // circumcircle is not empty
+        X = x;
+        Y = y;
     }
 }
 
 public class Triangle
 {
-    public Vector2 P { get; set; }
-    public Vector2 Q { get; set; }
-    public Vector2 R { get; set; }
+    public Point P { get; set; }
+    public Point Q { get; set; }
+    public Point R { get; set; }
 
-    public Triangle(Vector2 p, Vector2 q, Vector2 r)
+    public Triangle(Point p, Point q, Point r)
     {
         P = p;
         Q = q;
         R = r;
+    }
+}
+
+public class Event
+{
+    public Point Point { get; set; }
+    public int Type { get; set; }
+
+    public Event(Point p, int type)
+    {
+        Point = p;
+        Type = type;
     }
 }
