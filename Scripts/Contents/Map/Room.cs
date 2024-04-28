@@ -3,15 +3,8 @@ using System;
 
 public partial class Room : Node2D
 {
-    //divergent room type
-    public enum RoomTypes 
-    {
-        Basic,
-        A,
-        B,
-    }
 
-    RoomTypes _type;
+    Define.RoomTypes _type;
     Vector2I _size;
     [Export]
     public Vector2I Size
@@ -24,7 +17,7 @@ public partial class Room : Node2D
         }
     }
     [Export]
-    public RoomTypes RoomType
+    public Define.RoomTypes RoomType
     {
         get { return _type; }
         set
@@ -33,24 +26,23 @@ public partial class Room : Node2D
             GenerateRoom();
         }
     }
-
     RigidBody2D _body;
 
     public void GenerateRoom()
     {
         switch(RoomType)
         {
-            case RoomTypes.Basic:
+            case Define.RoomTypes.Basic:
                 {
                     GD.Print("Basic Romm Genrated");
                 }
                 break;
-            case RoomTypes.A:
+            case Define.RoomTypes.A:
                 {
                     GD.Print("A Romm Genrated");
                 }
                 break;
-            case RoomTypes.B:
+            case Define.RoomTypes.B:
                 {
                     GD.Print("B Romm Genrated");
                 }
@@ -62,6 +54,7 @@ public partial class Room : Node2D
 
     public override void _Ready()
     {
+        _body = this.GetChildByType<RigidBody2D>();
         DungeonBuilder.DungeonCompleteAction -= OnDungeonCompleted;
         DungeonBuilder.DungeonCompleteAction += OnDungeonCompleted;
     }
@@ -78,7 +71,8 @@ public partial class Room : Node2D
     {
         if (_body.IsValid() == false)
             return;
-        _body.Sleeping = true;
+        //_body.QueueFree();
+
     }
     #endregion
 

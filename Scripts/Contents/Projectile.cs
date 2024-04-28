@@ -19,7 +19,7 @@ public partial class Projectile : Sprite2D
 
     public override void _PhysicsProcess(double delta)
     {
-        GlobalPosition += new Vector2(_speed * (float)delta, 0);
+        GlobalPosition += new Godot.Vector2(_speed * (float)delta, 0);
     }
 
     //area 2D

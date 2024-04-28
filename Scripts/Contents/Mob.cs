@@ -21,7 +21,7 @@ public partial class Mob : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
-        Velocity = new Vector2(-_speed, 0);
+        Velocity = new Godot.Vector2(-_speed, 0);
         MoveAndSlide();
     }
 

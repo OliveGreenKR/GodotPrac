@@ -11,7 +11,7 @@ public partial class Tower : Sprite2D
         
 
         var timer = GetNode<Timer>("./Timer");
-        var projectile = Managers.Resource.LoadScene<Projectile>(Define.Scenes.Scenes);
+        var projectile = Managers.Resource.LoadPackedScene<Projectile>(Define.Scenes.Nodes);
         timer.Timeout += () =>
         {
             Managers.Resource.Instantiate(projectile, this);

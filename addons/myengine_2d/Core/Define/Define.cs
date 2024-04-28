@@ -5,6 +5,13 @@ namespace Define;
 
 public enum Scenes
 {
-    Scenes,
+    Nodes,
     GameScenes,
+}
+
+public enum RoomTypes
+{
+    Basic,
+    A,
+    B,
 }

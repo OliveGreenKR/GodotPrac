@@ -67,6 +67,32 @@ public static class Extension
 
     #region Node
     /// <summary>
+    ///  Find or Add this Node's child with name.
+    /// </summary>
+    public static T GetorAddChildByName<T>(this Node node, string name, bool recursive = true) where T : Node, new()
+    {
+        T child = node.FindChild(name, recursive) as T;
+
+        if (child != null)
+            return child;
+        child = new T();
+        node.AddChild(child);
+        return child;
+    }
+
+    public static T GetOrAddChildByType<T>(this Node node, bool recursive = true) where T : Node
+    {
+        T child = TryGetChildByType<T>(node, recursive);
+
+        if (child != null)
+            return child;
+
+        PackedScene scn = Managers.Resource.LoadPackedScene<T>(Define.Scenes.Nodes);
+        child = Managers.Resource.Instantiate<T> (scn, node);
+        return child;
+    }
+   
+    /// <summary>
     /// if object is not valid, return NULL and PushWarning
     /// </summary>
     public static T TryGetChildByType<T>(this Node node, bool recursive = true) where T : Node

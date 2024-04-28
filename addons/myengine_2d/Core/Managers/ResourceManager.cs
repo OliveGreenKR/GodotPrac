@@ -10,7 +10,7 @@ public class ResourceManager
     /// <summary>
     /// Load C# class to PackedScnene  via class Name.
     /// </summary>
-    public PackedScene LoadScene<T>(Define.Scenes type,string name =null, ResourceLoader.CacheMode mode = ResourceLoader.CacheMode.Reuse) where T : GodotObject
+    public PackedScene LoadPackedScene<T>(Define.Scenes type,string name =null, ResourceLoader.CacheMode mode = ResourceLoader.CacheMode.Reuse) where T : GodotObject
     {
         if(name == null)
         {
@@ -23,7 +23,7 @@ public class ResourceManager
 
         switch (type)
         {
-            case Define.Scenes.Scenes:
+            case Define.Scenes.Nodes:
                 {
                     path = "res://Scenes/" + name;
                 }
@@ -43,7 +43,9 @@ public class ResourceManager
         return ResourceLoader.Load<T>(path, "", mode);
     }
 
-
+    /// <summary>
+    /// Instantiate Node and Adding Child to parent
+    /// </summary>
     public T Instantiate<T>(string path, Node parent, Node.InternalMode mode = Node.InternalMode.Disabled) where T : Node
     {
         return Instantiate(path, parent, mode) as T;
@@ -61,6 +63,9 @@ public class ResourceManager
         return node;
     }
 
+    /// <summary>
+    /// Instantiate Scene to Node and Adding Child to parent
+    /// </summary>
     public T Instantiate<T>(PackedScene scene, Node parent, Node.InternalMode mode = Node.InternalMode.Disabled) where T : Node
     {
         return Instantiate(scene, parent, mode) as T;
