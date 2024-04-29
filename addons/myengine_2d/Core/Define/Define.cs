@@ -11,7 +11,7 @@ public enum Scenes
 
 public enum RoomTypes
 {
-    Basic,
+    Basic = 0,
     A,
     B,
 }

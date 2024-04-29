@@ -1,7 +1,6 @@
 using Godot;
 using Godot.Collections;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 public static class Extension 
@@ -113,9 +112,9 @@ public static class Extension
         return obj;
     }
 
-    public static List<T> GetChildrenByType<T>(this Node node, bool recursive = true) where T : Node
+    public static Array<Node> GetChildrenByType<T>(this Node node, bool recursive = true) where T : Node
     {
-        List<T> children = new List<T>();
+        Array<Node> children = new Array<Node>();
 
         int childCount = node.GetChildCount();
 
@@ -182,6 +181,19 @@ public static class Extension
         }
 
         return null;
+    }
+    #endregion
+
+
+    #region Vector
+    public static Vector2I ConvertInt(this Vector2 vector)
+    {
+        return new Vector2I((int)vector.X, (int)vector.Y);
+    }
+
+    public static Vector3I ConvertInt(this Vector3 vector)
+    {
+        return new Vector3I((int)vector.X, (int)vector.Y, (int)vector.Z);
     }
     #endregion
 }

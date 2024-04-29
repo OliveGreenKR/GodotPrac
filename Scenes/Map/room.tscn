@@ -17,3 +17,4 @@ angular_damp = 7.372
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 shape = SubResource("RectangleShape2D_weesl")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)

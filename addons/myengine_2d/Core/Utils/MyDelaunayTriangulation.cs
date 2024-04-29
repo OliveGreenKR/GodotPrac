@@ -10,22 +10,22 @@ public class DelaunayTriangulation
         List<Triangle> triangles = new List<Triangle>();
 
         // Create a sweep event queue
-        List<Event> events = new List<Event>();
+        List<Vertex> vertecies = new List<Vertex>();
 
         // Add all points to the event queue
         foreach (Point p in points)
         {
-            events.Add(new Event(p, 0));
+            vertecies.Add(new Vertex(p, 0));
         }
 
         // Sort the event queue by y-coordinate
-        events.Sort((a, b) => a.Point.Y.CompareTo(b.Point.Y));
+        vertecies.Sort((a, b) => a.Point.Y.CompareTo(b.Point.Y));
 
         // Process the event queue
-        while (events.Count > 0)
+        while (vertecies.Count > 0)
         {
-            Event e = events.First();
-            events.RemoveAt(0);
+            Vertex e = vertecies.First();
+            vertecies.RemoveAt(0);
 
             // Find the point with the smallest y-coordinate
             Point p = e.Point;
@@ -33,7 +33,7 @@ public class DelaunayTriangulation
             Point r = null;
 
             // Find the points that are to the right of p
-            foreach (Event ne in events)
+            foreach (Vertex ne in vertecies)
             {
                 if (ne.Point.Y == p.Y)
                 {
@@ -55,11 +55,11 @@ public class DelaunayTriangulation
             // Add new events to the queue
             if (q != null)
             {
-                events.Add(new Event(q, 1));
+                vertecies.Add(new Vertex(q, 1));
             }
             if (r != null)
             {
-                events.Add(new Event(r, 1));
+                vertecies.Add(new Vertex(r, 1));
             }
         }
 
@@ -93,12 +93,12 @@ public class Triangle
     }
 }
 
-public class Event
+public class Vertex
 {
     public Point Point { get; set; }
     public int Type { get; set; }
 
-    public Event(Point p, int type)
+    public Vertex(Point p, int type)
     {
         Point = p;
         Type = type;
