@@ -104,3 +104,21 @@ public class Event
         Type = type;
     }
 }
+
+/* »ç¿ë¹ý
+ * 
+ * 
+List<Point> points = new List<Point>();
+points.Add(new Point(0, 0));
+points.Add(new Point(1, 0));
+points.Add(new Point(1, 1));
+points.Add(new Point(0, 1));
+
+List<Triangle> triangles = DelaunayTriangulation.Triangulate(points);
+
+foreach (Triangle t in triangles)
+{
+    Console.WriteLine($"Triangle: ({t.P.X}, {t.P.Y}) - ({t.Q.X}, {t.Q.Y}) - ({t.R.X}, {t.R.Y})");
+}
+
+ */
