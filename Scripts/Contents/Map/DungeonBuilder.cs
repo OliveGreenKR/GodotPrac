@@ -2,7 +2,7 @@ using Godot;
 using Godot.Collections;
 using System;
 using static Godot.OpenXRInterface;
-
+using DelaunatorSharp;
 
 public partial class DungeonBuilder : Node
 {
@@ -19,10 +19,44 @@ public partial class DungeonBuilder : Node
 
     public ulong? Seed { get; private set; }
 
-    RandomNumberGenerator _rand= new RandomNumberGenerator();
+    //random gernerator
+    RandomNumberGenerator _rand = new RandomNumberGenerator();
+
+    #region Tile &$ Deluaunry
+    class GridPoints : IPoint
+    {
+        Vector2I _vector;
+        public Vector2I Vector
+        {
+            get
+            {
+                return _vector;
+            }
+            set
+            {
+                _vector = value;
+            }
+        }
+        public double X
+        {
+            get { return Vector.X; }
+            set { _vector.X = (int)value;}
+        }
+        public double Y
+        {
+            get { return Vector.Y; }
+            set { _vector.Y = (int)value; }
+        }
+
+    }
 
     TileMap _tileMap;
+    GridPoints[] _points;
 
+    Delaunator _delaunator;
+
+    #endregion
+    //room
     PackedScene _roomInstance;
     Dictionary<Define.RoomTypes, Node> _rooms = new Dictionary<Define.RoomTypes, Node>();
 
@@ -34,12 +68,11 @@ public partial class DungeonBuilder : Node
         _tileMap.RenderingQuadrantSize = TileSize;
 
         _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes,"Map/room.tscn");
+
         
-        //bind Define.RoomTypes to Node2D
+
+        //generate Node2D each to 'Define.RoomTypes'
         Bind();
-
-        //todo: tilemap
-
         //test
         for (int i =0; i < 35; i++)
         {
@@ -47,6 +80,8 @@ public partial class DungeonBuilder : Node
             GenerateRoom(pos);
         }
         DungeonCompleteAction.Invoke();
+
+        //todp :tilemap
     }
 
     public override void _Process(double delta)

@@ -71,7 +71,7 @@ public partial class Room : Node2D
     {
         if (_body.IsValid() == false)
             return;
-        //_body.QueueFree();
+        //todo : collision deacitvated or queue free
 
     }
     #endregion

@@ -8,4 +8,7 @@
   <ItemGroup>
     <Folder Include="Scenes\" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Delaunator" Version="1.0.10" />
+  </ItemGroup>
 </Project>
