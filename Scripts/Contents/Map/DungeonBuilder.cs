@@ -3,6 +3,7 @@ using Godot.Collections;
 using System;
 using DelaunatorSharp;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class DungeonBuilder : Node
 {
@@ -76,6 +77,7 @@ public partial class DungeonBuilder : Node
             var tmp = GenerateRoomRandomlyAt(pos);
             tmpRooms.Add(tmp);
             _TypeRooms[tmp.RoomType].AddChild(tmp, true);
+            GD.Print($"init {tmp.Name} :  {tmp.Position}");
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
@@ -90,20 +92,19 @@ public partial class DungeonBuilder : Node
         }
 
         _delaunator = new Delaunator(points);
-        //GD.Print($"{_delaunator.GetTriangles().Count()}");
-        //Line2D drawer = this.GetChildByType<Line2D>();
-        //foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
-        //{
-        //    _delaunator.ForEachTriangleEdge((IEdge edge) =>
-        //    {
-        //        //draw line p-q
-        //        var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-        //        var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-
-        //        //drawer.AddPoint(p1);
-        //        //drawer.AddPoint(p2);
-        //    });
-        //}
+        GD.Print($"{_delaunator.GetTriangles().Count()}");
+        Line2D drawer = this.GetChildByType<Line2D>();
+        foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
+        {
+            _delaunator.ForEachTriangleEdge((IEdge edge) =>
+            {
+                //draw line p-q
+                var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
+                var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
+                drawer.AddPoint(p1);
+                drawer.AddPoint(p2);
+            });
+        }
 
         //dugeon build fin
         DungeonCompleteAction.Invoke();
@@ -120,7 +121,7 @@ public partial class DungeonBuilder : Node
         return room;
     }
 
-    Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
+    static Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
     {
         Array<Room> selected = new Array<Room>();
 
@@ -130,7 +131,8 @@ public partial class DungeonBuilder : Node
             return null;
         }
 
-        selected.AddRange(rooms.Where(room => room.Size.Length() > standard)
+        selected.AddRange(rooms.OrderBy(room => room.Size.Length())
+            .Where(room => room.Size.Length() > standard)
             .Select((room) =>
             {
                 room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
@@ -139,6 +141,9 @@ public partial class DungeonBuilder : Node
 
         return selected;
     }
+
+
+
 
     #region Math
     Godot.Vector2I GetRandomPointInCircle(int radius)
