@@ -66,6 +66,13 @@ public static class Extension
     #endregion
 
     #region Node
+
+    public static async void WaitForSeconds(this Node node, float seconds)
+    {
+        await node.ToSignal(node.GetTree().CreateTimer(1f), Timer.SignalName.Timeout);
+        return;
+    }
+
     /// <summary>
     ///  Find or Add this Node's child with name.
     /// </summary>

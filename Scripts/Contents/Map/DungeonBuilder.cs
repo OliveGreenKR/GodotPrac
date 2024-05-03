@@ -4,6 +4,9 @@ using System;
 using DelaunatorSharp;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using MEC;
 
 public partial class DungeonBuilder : Node
 {
@@ -15,6 +18,8 @@ public partial class DungeonBuilder : Node
     public Godot.Vector2I DuegonSize { get; set; } = new Godot.Vector2I(200, 100);
     [Export]
     public int RoomCount { get; set; }
+    [Export]
+    public int MinMainRoomCount { get; set; }
     [Export]
     public int MaxRoomSize { get; set; }
     [Export]
@@ -44,12 +49,10 @@ public partial class DungeonBuilder : Node
 
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
-        GenerateDungeon();
+        //TODO::Loading For Generating Dungeon
+        Task.Run(() => { GenerateDungeon(); });
+        GD.Print("ReadyDone");
         //todp :tilemap
-    }
-
-    public override void _Process(double delta)
-    {
     }
 
     void Bind()
@@ -67,8 +70,9 @@ public partial class DungeonBuilder : Node
         }
     }
 
-    public async  void GenerateDungeon()
+    public async void GenerateDungeon()
     {
+        await ToSignal(GetTree().CreateTimer(GetPhysicsProcessDeltaTime()), Timer.SignalName.Timeout);
         Array<Room> tmpRooms = new Array<Room>();
         //generating room
         for (int i = 0; i < RoomCount; i++)
@@ -80,13 +84,13 @@ public partial class DungeonBuilder : Node
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
-        Array<Room> selected =  await SelectMainRoomsAsync(tmpRooms, standard);
+        Array<Room> selected =  SelectMainRooms(tmpRooms, standard);
 
+        //wait for positioning Rooms
+        await ToSignal(GetTree().CreateTimer(1f), Timer.SignalName.Timeout);
         //delaunary main Rooms
         Define.GridPoint[] points = selected.Select(room => room.GlobalPosition.ToVector2I().ToGridPoint()).ToArray();
-
         _delaunator = new Delaunator(points);
-        GD.Print($"{_delaunator.GetTriangles().Count()}");
         Line2D drawer = this.GetChildByType<Line2D>();
         foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
         {
@@ -100,7 +104,7 @@ public partial class DungeonBuilder : Node
             });
         }
 
-        //dugeon build fin
+        //dugeon build finished
         DungeonCompleteAction.Invoke();
     }
 
@@ -108,30 +112,14 @@ public partial class DungeonBuilder : Node
     Room GenerateRoomRandomlyAt(Godot.Vector2 position)
     {
         //--------[1]init Room  at point with random size
-        Room room = Managers.Resource.Instantiate<Room>(_roomInstance, null);
+        Room room = Managers.Resource.Instantiate<Room>(_roomInstance,null);
         room.Size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
                                  _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
-        room.GlobalPosition = position;
+        room.Position = position;
         return room;
     }
 
-    async Task<Array<Room>> SelectMainRoomsAsync(Array<Room> rooms, float standard)
-    {
-        Array<Room> selected = SelectMainRooms(rooms, standard);
-        int i = 0;
-        while( selected.Count < 3)
-        {
-            standard *= 0.9f;
-            selected = SelectMainRooms(rooms, standard);
-            if(i % 100 == 0)
-            {
-                await ToSignal(GetTree().CreateTimer(0.3f), Timer.SignalName.Timeout);
-            }
-        }
-        return selected;
-    }
-
-    static Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
+    Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
     {
         Array<Room> selected = new Array<Room>();
 
@@ -141,20 +129,22 @@ public partial class DungeonBuilder : Node
             return null;
         }
 
-        selected.AddRange(rooms.OrderBy(room => room.Size.Length())
-            .Where(room => room.Size.Length() > standard)
+        bool test = true;
+        selected.AddRange(
+            rooms.Where(room => room.Size.Length() > standard)
             .Select((room) =>
             {
                 room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
+                if (test)
+                {
+                    room.testAction += () => { GD.Print($"{room.GlobalPosition}"); };
+                    test = !test;
+                }
                 return room;
             }));
 
         return selected;
     }
-
-
-
-
     #region Math
     Godot.Vector2I GetRandomPointInCircle(int radius)
     {

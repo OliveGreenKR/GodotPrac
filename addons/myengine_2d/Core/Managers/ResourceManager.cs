@@ -37,7 +37,9 @@ public class ResourceManager
         return Load<PackedScene>(path, mode);
     }
 
-
+    /// <summary>
+    /// Godot ResourceLoader.Load Wrapper
+    /// </summary>
     public T Load<T>(string path, ResourceLoader.CacheMode mode =  ResourceLoader.CacheMode.Reuse) where T : GodotObject
     {
         return ResourceLoader.Load<T>(path, "", mode);
