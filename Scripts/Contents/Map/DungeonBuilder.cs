@@ -77,19 +77,13 @@ public partial class DungeonBuilder : Node
             var tmp = GenerateRoomRandomlyAt(pos);
             tmpRooms.Add(tmp);
             _TypeRooms[tmp.RoomType].AddChild(tmp, true);
-            GD.Print($"init {tmp.Name} :  {tmp.Position}");
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
         Array<Room> selected =  await SelectMainRoomsAsync(tmpRooms, standard);
 
         //delaunary main Rooms
-        Define.GridPoint[] points = selected.Select(room => room.Position.ToVector2I().ToGridPoint()).ToArray();
-
-        foreach (var p in points)
-        {
-            GD.Print(p.X);
-        }
+        Define.GridPoint[] points = selected.Select(room => room.GlobalPosition.ToVector2I().ToGridPoint()).ToArray();
 
         _delaunator = new Delaunator(points);
         GD.Print($"{_delaunator.GetTriangles().Count()}");
@@ -117,7 +111,7 @@ public partial class DungeonBuilder : Node
         Room room = Managers.Resource.Instantiate<Room>(_roomInstance, null);
         room.Size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
                                  _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
-        room.Position = position;
+        room.GlobalPosition = position;
         return room;
     }
 
