@@ -7,6 +7,7 @@
 script = ExtResource("1_il8nd")
 TileSize = 16
 RoomCount = 24
+MinMainRoomCount = 6
 MaxRoomSize = 10
 MinRoomSize = 3
 

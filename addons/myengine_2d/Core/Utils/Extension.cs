@@ -67,12 +67,10 @@ public static class Extension
 
     #region Node
 
-    public static async void WaitForSeconds(this Node node, float seconds)
+    public static SignalAwaiter WaitForSeconds(this Node node, double timeSec, bool processAlways = true, bool processInPhysics = false, bool ignoreTimeScale = false)
     {
-        await node.ToSignal(node.GetTree().CreateTimer(1f), Timer.SignalName.Timeout);
-        return;
+        return node.ToSignal(node.GetTree().CreateTimer(timeSec, processAlways, processInPhysics, ignoreTimeScale), SceneTreeTimer.SignalName.Timeout);
     }
-
     /// <summary>
     ///  Find or Add this Node's child with name.
     /// </summary>

@@ -47,10 +47,13 @@ public partial class DungeonBuilder : Node
         _tileMap.RenderingQuadrantSize = TileSize;
         _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
 
+        DungeonCompleteAction += DrawTriangulation;
+
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
         //TODO::Loading For Generating Dungeon
         Task.Run(() => { GenerateDungeon(); });
+
         GD.Print("ReadyDone");
         //todp :tilemap
     }
@@ -72,8 +75,9 @@ public partial class DungeonBuilder : Node
 
     public async void GenerateDungeon()
     {
-        await ToSignal(GetTree().CreateTimer(GetPhysicsProcessDeltaTime()), Timer.SignalName.Timeout);
-        Array<Room> tmpRooms = new Array<Room>();
+        await this.WaitForSeconds(GetPhysicsProcessDeltaTime(),processInPhysics:true);
+
+        List<Room> tmpRooms = new List<Room>();
         //generating room
         for (int i = 0; i < RoomCount; i++)
         {
@@ -84,26 +88,15 @@ public partial class DungeonBuilder : Node
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
-        Array<Room> selected =  SelectMainRooms(tmpRooms, standard);
+
+        List<Room> selected = SelectMainRooms(tmpRooms, standard);
 
         //wait for positioning Rooms
-        await ToSignal(GetTree().CreateTimer(1f), Timer.SignalName.Timeout);
+        await this.WaitForSeconds(1f, processInPhysics: true);
+
         //delaunary main Rooms
         Define.GridPoint[] points = selected.Select(room => room.GlobalPosition.ToVector2I().ToGridPoint()).ToArray();
         _delaunator = new Delaunator(points);
-        Line2D drawer = this.GetChildByType<Line2D>();
-        foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
-        {
-            _delaunator.ForEachTriangleEdge((IEdge edge) =>
-            {
-                //draw line p-q
-                var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-                var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-                drawer.AddPoint(p1);
-                drawer.AddPoint(p2);
-            });
-        }
-
         //dugeon build finished
         DungeonCompleteAction.Invoke();
     }
@@ -119,32 +112,55 @@ public partial class DungeonBuilder : Node
         return room;
     }
 
-    Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
+    List<Room> SelectMainRooms(List<Room> rooms, float standard)
     {
-        Array<Room> selected = new Array<Room>();
-
         if (rooms == null)
         {
             GD.PushWarning("Can not Slecting Main Rooms.");
             return null;
         }
 
-        bool test = true;
-        selected.AddRange(
-            rooms.Where(room => room.Size.Length() > standard)
-            .Select((room) =>
-            {
-                room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
-                if (test)
-                {
-                    room.testAction += () => { GD.Print($"{room.GlobalPosition}"); };
-                    test = !test;
-                }
-                return room;
-            }));
+        //divide room with Size
+        var groupRoom = rooms.GroupBy(room => room.Size.Length() > standard)
+            .ToDictionary(g => g.Key , g => g.ToList());
+
+        var selected = groupRoom[true];
+
+        //fill in the shortfall
+        if (groupRoom[true].Count < MinMainRoomCount)
+        {
+            int lack = MinMainRoomCount - groupRoom[true].Count;
+            groupRoom[true].AddRange(
+                groupRoom[false].OrderBy(room => room.Size.Length())
+                .Where((room, idx) => idx < lack)
+                );
+        }
+
+        //select Main Rooms
+        foreach(var room in groupRoom[true])
+        {
+            room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
+        }
 
         return selected;
     }
+
+    void DrawTriangulation()
+    {
+        Line2D drawer = this.GetOrAddChildByType<Line2D>();
+        foreach (Triangle tri in _delaunator.GetTriangles())
+        {
+            _delaunator.ForEachTriangleEdge((IEdge edge) =>
+            {
+                //draw line p-q
+                var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
+                var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
+                drawer.AddPoint(p1);
+                drawer.AddPoint(p2);
+            });
+        }
+    }
+
     #region Math
     Godot.Vector2I GetRandomPointInCircle(int radius)
     {
