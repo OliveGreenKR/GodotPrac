@@ -25,33 +25,6 @@ public partial class DungeonBuilder : Node
     RandomNumberGenerator _rand = new RandomNumberGenerator();
 
     #region Tile &$ Deluaunry
-    class GridPoint : IPoint
-    {
-        Vector2I _vector;
-        public Vector2I Vector
-        {
-            get
-            {
-                return _vector;
-            }
-            set
-            {
-                _vector = value;
-            }
-        }
-        public double X
-        {
-            get { return _vector.X; }
-            set { _vector.X = (int)value;}
-        }
-        public double Y
-        {
-            get { return _vector.Y; }
-            set { _vector.Y = (int)value; }
-        }
-
-    }
-
     TileMap _tileMap;
     Delaunator _delaunator;
 
@@ -62,12 +35,11 @@ public partial class DungeonBuilder : Node
 
     public override void _Ready()
     {
-        GD.Print($"DungeonBuild {TileSize} : {RoomCount} in {MinRoomSize}~{MaxRoomSize}");
         _rand.Seed = Seed ?? (ulong)DateTime.Now.Ticks;
 
         _tileMap = this.GetChildByType<TileMap>();
         _tileMap.RenderingQuadrantSize = TileSize;
-        _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes,"Map/room.tscn");
+        _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
 
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
@@ -81,48 +53,55 @@ public partial class DungeonBuilder : Node
 
     void Bind()
     {
-        var type =  typeof(Define.RoomTypes);
+        var type = typeof(Define.RoomTypes);
         string[] names = Enum.GetNames(type);
 
         //Generate Room Node by Type
-        for(int i = 0; i < names.Length; i++)
+        for (int i = 0; i < names.Length; i++)
         {
-            var name = names[i];  
+            var name = names[i];
             var child = this.GetorAddChildByName<Node>(name);
             child.Name = name;
-            _TypeRooms.Add((Define.RoomTypes)i,child);
+            _TypeRooms.Add((Define.RoomTypes)i, child);
         }
     }
 
     public void GenerateDungeon()
     {
-        Array<Room> tmpRooms =  new Array<Room> ();
+        Array<Room> tmpRooms = new Array<Room>();
         //generating room
         for (int i = 0; i < RoomCount; i++)
         {
-            Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ConvertInt() / 2;
-            tmpRooms.Add(GenerateRoomRandomlyAt(pos));
+            Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
+            var tmp = GenerateRoomRandomlyAt(pos);
+            tmpRooms.Add(tmp);
+            _TypeRooms[tmp.RoomType].AddChild(tmp, true);
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
         Array<Room> selected = SelectMainRooms(tmpRooms, standard);
 
-        foreach (var room in selected)
+        //delaunary main Rooms
+        Define.GridPoint[] points = selected.Select(room => room.Position.ToVector2I().ToGridPoint()).ToArray();
+
+        foreach (var p in points)
         {
-            _TypeRooms[room.RoomType].AddChild(room, true);
+            GD.Print(p.X);
         }
 
-        //delaunary main Rooms
-        //_delaunator = new Delaunator(_points);
+        _delaunator = new Delaunator(points);
+        //GD.Print($"{_delaunator.GetTriangles().Count()}");
         //Line2D drawer = this.GetChildByType<Line2D>();
         //foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
         //{
-        //    _delaunator.ForEachTriangleEdge((IEdge edge) => {
+        //    _delaunator.ForEachTriangleEdge((IEdge edge) =>
+        //    {
         //        //draw line p-q
         //        var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
         //        var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-        //        drawer.AddPoint(p1);
-        //        drawer.AddPoint(p2);
+
+        //        //drawer.AddPoint(p1);
+        //        //drawer.AddPoint(p2);
         //    });
         //}
 
@@ -143,7 +122,7 @@ public partial class DungeonBuilder : Node
 
     Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
     {
-        Array<Room> selected =  new Array<Room>();
+        Array<Room> selected = new Array<Room>();
 
         if (rooms == null)
         {
@@ -152,7 +131,11 @@ public partial class DungeonBuilder : Node
         }
 
         selected.AddRange(rooms.Where(room => room.Size.Length() > standard)
-            .Select(room => room));
+            .Select((room) =>
+            {
+                room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
+                return room;
+            }));
 
         return selected;
     }
@@ -160,7 +143,7 @@ public partial class DungeonBuilder : Node
     #region Math
     Godot.Vector2I GetRandomPointInCircle(int radius)
     {
-        return GetRandomPointInEllipse( new Godot.Vector2I(radius, radius));
+        return GetRandomPointInEllipse(new Godot.Vector2I(radius, radius));
     }
 
     Godot.Vector2I GetRandomPointInEllipse(Godot.Vector2I size)
@@ -184,3 +167,4 @@ public partial class DungeonBuilder : Node
     #endregion
 
 }
+

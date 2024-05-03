@@ -1,3 +1,4 @@
+using Define;
 using Godot;
 using Godot.Collections;
 using System;
@@ -186,14 +187,19 @@ public static class Extension
 
 
     #region Vector
-    public static Vector2I ConvertInt(this Vector2 vector)
+    public static Vector2I ToVector2I(this Vector2 vector)
     {
         return new Vector2I((int)vector.X, (int)vector.Y);
     }
 
-    public static Vector3I ConvertInt(this Vector3 vector)
+    public static Vector3I ToVector3I(this Vector3 vector)
     {
         return new Vector3I((int)vector.X, (int)vector.Y, (int)vector.Z);
+    }
+
+    public static Define.GridPoint ToGridPoint(this Vector2I vec)
+    {
+        return new Define.GridPoint { Vector = (Vector2I)vec };
     }
     #endregion
 }

@@ -20,4 +20,5 @@ layer_1/name = "Ground"
 layer_1/tile_data = PackedInt32Array()
 
 [node name="Line2D" type="Line2D" parent="."]
+position = Vector2(0, -1)
 width = 2.0
