@@ -67,7 +67,7 @@ public partial class DungeonBuilder : Node
         }
     }
 
-    public void GenerateDungeon()
+    public async  void GenerateDungeon()
     {
         Array<Room> tmpRooms = new Array<Room>();
         //generating room
@@ -81,7 +81,7 @@ public partial class DungeonBuilder : Node
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
-        Array<Room> selected = SelectMainRooms(tmpRooms, standard);
+        Array<Room> selected =  await SelectMainRoomsAsync(tmpRooms, standard);
 
         //delaunary main Rooms
         Define.GridPoint[] points = selected.Select(room => room.Position.ToVector2I().ToGridPoint()).ToArray();
@@ -119,6 +119,22 @@ public partial class DungeonBuilder : Node
                                  _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
         room.Position = position;
         return room;
+    }
+
+    async Task<Array<Room>> SelectMainRoomsAsync(Array<Room> rooms, float standard)
+    {
+        Array<Room> selected = SelectMainRooms(rooms, standard);
+        int i = 0;
+        while( selected.Count < 3)
+        {
+            standard *= 0.9f;
+            selected = SelectMainRooms(rooms, standard);
+            if(i % 100 == 0)
+            {
+                await ToSignal(GetTree().CreateTimer(0.3f), Timer.SignalName.Timeout);
+            }
+        }
+        return selected;
     }
 
     static Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
