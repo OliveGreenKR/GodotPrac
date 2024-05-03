@@ -3,7 +3,6 @@ using Godot.Collections;
 using System;
 using DelaunatorSharp;
 using System.Linq;
-using System.Collections.Generic;
 
 public partial class DungeonBuilder : Node
 {
@@ -54,13 +53,12 @@ public partial class DungeonBuilder : Node
     }
 
     TileMap _tileMap;
-    GridPoint[] _points;
     Delaunator _delaunator;
 
     #endregion
     //room
     PackedScene _roomInstance;
-    Godot.Collections.Dictionary<Define.RoomTypes, Node> _rooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
+    Godot.Collections.Dictionary<Define.RoomTypes, Node> _TypeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
 
     public override void _Ready()
     {
@@ -69,48 +67,11 @@ public partial class DungeonBuilder : Node
 
         _tileMap = this.GetChildByType<TileMap>();
         _tileMap.RenderingQuadrantSize = TileSize;
-
-        _points =  new GridPoint[RoomCount];
-
         _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes,"Map/room.tscn");
 
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
-        //generating room
-        for (int i =0; i < RoomCount; i++)
-        {
-            Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ConvertInt()/2;
-            GenerateRoomRandomly(pos);
-            _points[i] = new GridPoint() { Vector=pos };
-        }
-        //select main rooms
-        var standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
-        SelectMainRooms(standard);
-
-        //delaunary main Rooms
-        _delaunator = new Delaunator(_points);
-        Line2D drawer =  this.GetChildByType<Line2D>();
-        foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
-        {
-            _delaunator.ForEachTriangleEdge((IEdge edge) => {
-                //draw line p-q
-                var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-                var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-                drawer.AddPoint(p1);
-                drawer.AddPoint(p2);
-            });
-        }
-
-        foreach( var p in drawer.Points)
-        {
-            GD.Print($"{p}");
-        }
-    
-        
-
-        //dugeon build fin
-        DungeonCompleteAction.Invoke();
-
+        GenerateDungeon();
         //todp :tilemap
     }
 
@@ -129,47 +90,71 @@ public partial class DungeonBuilder : Node
             var name = names[i];  
             var child = this.GetorAddChildByName<Node>(name);
             child.Name = name;
-            _rooms.Add((Define.RoomTypes)i,child);
+            _TypeRooms.Add((Define.RoomTypes)i,child);
         }
     }
 
+    public void GenerateDungeon()
+    {
+        Array<Room> tmpRooms =  new Array<Room> ();
+        //generating room
+        for (int i = 0; i < RoomCount; i++)
+        {
+            Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ConvertInt() / 2;
+            tmpRooms.Add(GenerateRoomRandomlyAt(pos));
+        }
+        //select main rooms
+        float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
+        Array<Room> selected = SelectMainRooms(tmpRooms, standard);
+
+        foreach (var room in selected)
+        {
+            _TypeRooms[room.RoomType].AddChild(room, true);
+        }
+
+        //delaunary main Rooms
+        //_delaunator = new Delaunator(_points);
+        //Line2D drawer = this.GetChildByType<Line2D>();
+        //foreach (DelaunatorSharp.Triangle tri in _delaunator.GetTriangles())
+        //{
+        //    _delaunator.ForEachTriangleEdge((IEdge edge) => {
+        //        //draw line p-q
+        //        var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
+        //        var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
+        //        drawer.AddPoint(p1);
+        //        drawer.AddPoint(p2);
+        //    });
+        //}
+
+        //dugeon build fin
+        DungeonCompleteAction.Invoke();
+    }
+
     //generate Room
-    void GenerateRoomRandomly(Godot.Vector2 position)
+    Room GenerateRoomRandomlyAt(Godot.Vector2 position)
     {
         //--------[1]init Room  at point with random size
         Room room = Managers.Resource.Instantiate<Room>(_roomInstance, null);
         room.Size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
                                  _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
-
         room.Position = position;
-        _rooms[room.RoomType].AddChild(room,true);
+        return room;
     }
 
-    void SelectMainRooms(float standard)
+    Array<Room> SelectMainRooms(Array<Room> rooms, float standard)
     {
-        var values = Enum.GetValues(typeof(Define.RoomTypes)).Cast<Define.RoomTypes>();
+        Array<Room> selected =  new Array<Room>();
 
-        foreach (var value in values)
+        if (rooms == null)
         {
-            Node typeNode = _rooms[value];
-
-            var rooms = typeNode.GetChildrenByType<Room>();
-            if (rooms == null)
-                continue;
-
-            GD.Print($"{value} :{rooms.Count}");
-            foreach (Node node in rooms)
-            { 
-                var room = node as Room;
-                //GD.Print($"{room.Name} Size : {room.Size} / {standard}");
-                if (room.Size.Length() > standard)
-                {
-                    _points.Append(new GridPoint() { Vector = room.Position.ConvertInt() });
-                    GD.Print($"[MAIN]{room.Name} :" + room.Size.ToString());
-                    room.GetChildByType<CollisionShape2D>().DebugColor = new Color(0xdb56576b);
-                }
-            }
+            GD.PushWarning("Can not Slecting Main Rooms.");
+            return null;
         }
+
+        selected.AddRange(rooms.Where(room => room.Size.Length() > standard)
+            .Select(room => room));
+
+        return selected;
     }
 
     #region Math
