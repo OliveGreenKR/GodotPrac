@@ -32,7 +32,6 @@ public partial class DungeonBuilder : Node
 
     #region Tile &$ Deluaunry
     TileMap _tileMap;
-    Delaunator _delaunator;
 
     #endregion
     //room
@@ -46,8 +45,6 @@ public partial class DungeonBuilder : Node
         _tileMap = this.GetChildByType<TileMap>();
         _tileMap.RenderingQuadrantSize = TileSize;
         _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
-
-        DungeonCompleteAction += DrawTriangulation;
 
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
@@ -79,6 +76,7 @@ public partial class DungeonBuilder : Node
         await this.WaitForSeconds(GetPhysicsProcessDeltaTime(),processInPhysics:true);
 
         List<Room> tmpRooms = new List<Room>();
+        Delaunator delaunator;
         //generating room
         for (int i = 0; i < RoomCount; i++)
         {
@@ -91,24 +89,71 @@ public partial class DungeonBuilder : Node
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
 
         List<Room> selected = SelectMainRooms(tmpRooms, standard);
-
+        
         //wait for positioning Rooms
         await this.WaitForSeconds(1f, processInPhysics: true);
 
         //delaunary main Rooms
-        Define.GridPoint[] points = selected.Select(room => room.GlobalPosition.ToVector2I().ToGridPoint()).ToArray();
-        _delaunator = new Delaunator(points);
+        //Define.GridPoint[] points = selected.Select( room =>  room.GlobalPosition.ToVector2I().ToGridPoint() ).ToArray();
+        Define.GridPoint[] points = selected.Select((room, i) =>
+        { return new Define.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i }; }
+        ).ToArray();
+
+        delaunator = new Delaunator(points);
 
         //todo: make MST
 
         //todo : plus some edge to MST
+        //1. adjacent list
+        bool[] visited = new bool[points.Length];
+        PriorityQueue<Define.GridPoint, int> pq = new PriorityQueue<Define.GridPoint, int>();
+
+        foreach (Triangle tri in delaunator.GetTriangles())
+        {
+            delaunator.ForEachTriangleEdge((IEdge edge) =>
+            {
+                if (edge.Index > delaunator.Halfedges[edge.Index])
+                {
+                    //draw line p-q
+                    var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
+                    var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
+                    
+                    
+
+                }
+            });
+        }
+
 
         //todo :make edge to road.
         //_delaunator.ForEachTriangleEdge(edge => { });
 
 
+        //draw triange
+        DrawTriangles(delaunator);
+
+
         //dugeon build finished
         DungeonCompleteAction.Invoke();
+    }
+
+    void DrawTriangles( Delaunator delaunator)
+    {
+        Line2D drawer = this.GetOrAddChildByType<Line2D>();
+        foreach (Triangle tri in delaunator.GetTriangles())
+        {
+            delaunator.ForEachTriangleEdge((IEdge edge) =>
+            {
+                if (edge.Index > delaunator.Halfedges[edge.Index])
+                {
+                    //draw line p-q
+                    var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
+                    var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
+                    drawer.AddPoint(p1);
+                    drawer.AddPoint(p2);
+                }
+            });
+        }
     }
 
     //generate Single Room
@@ -155,28 +200,6 @@ public partial class DungeonBuilder : Node
         return selected;
     }
 
-    void DrawTriangulation()
-    {
-        Line2D drawer = this.GetOrAddChildByType<Line2D>();
-        foreach (Triangle tri in _delaunator.GetTriangles())
-        {
-            _delaunator.ForEachTriangleEdge((IEdge edge) =>
-            {
-                if (edge.Index > _delaunator.Halfedges[edge.Index])
-                {
-                    //draw line p-q
-                    var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-                    var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-                    drawer.AddPoint(p1);
-                    drawer.AddPoint(p2);
-                }
-            });
-        }
-    }
-
-    void MakeMST()
-    {
-    }
     #region Math
     Godot.Vector2I GetRandomPointInCircle(int radius)
     {
