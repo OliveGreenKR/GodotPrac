@@ -51,6 +51,7 @@ public partial class DungeonBuilder : Node
 
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
+
         //TODO::Loading For Generating Dungeon
         Task.Run(() => { GenerateDungeon(); });
 
@@ -97,11 +98,20 @@ public partial class DungeonBuilder : Node
         //delaunary main Rooms
         Define.GridPoint[] points = selected.Select(room => room.GlobalPosition.ToVector2I().ToGridPoint()).ToArray();
         _delaunator = new Delaunator(points);
+
+        //todo: make MST
+
+        //todo : plus some edge to MST
+
+        //todo :make edge to road.
+        //_delaunator.ForEachTriangleEdge(edge => { });
+
+
         //dugeon build finished
         DungeonCompleteAction.Invoke();
     }
 
-    //generate Room
+    //generate Single Room
     Room GenerateRoomRandomlyAt(Godot.Vector2 position)
     {
         //--------[1]init Room  at point with random size
@@ -152,15 +162,21 @@ public partial class DungeonBuilder : Node
         {
             _delaunator.ForEachTriangleEdge((IEdge edge) =>
             {
-                //draw line p-q
-                var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-                var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-                drawer.AddPoint(p1);
-                drawer.AddPoint(p2);
+                if (edge.Index > _delaunator.Halfedges[edge.Index])
+                {
+                    //draw line p-q
+                    var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
+                    var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
+                    drawer.AddPoint(p1);
+                    drawer.AddPoint(p2);
+                }
             });
         }
     }
 
+    void MakeMST()
+    {
+    }
     #region Math
     Godot.Vector2I GetRandomPointInCircle(int radius)
     {
