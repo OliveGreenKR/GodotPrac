@@ -1,8 +1,9 @@
 using Godot;
 using System;
 
-public partial class Room : Node2D
+public partial class Room : RigidBody2D
 {
+    public Action testAction;
 
     Define.RoomTypes _type;
     Vector2I _size;
@@ -26,7 +27,12 @@ public partial class Room : Node2D
             GenerateRoom();
         }
     }
-    RigidBody2D _body;
+
+    public override void _PhysicsProcess(double delta)
+    {
+        if (testAction != null)
+            testAction.Invoke();
+    }
 
     public void GenerateRoom()
     {
@@ -54,7 +60,6 @@ public partial class Room : Node2D
 
     public override void _Ready()
     {
-        _body = this.GetChildByType<RigidBody2D>();
         DungeonBuilder.DungeonCompleteAction -= OnDungeonCompleted;
         DungeonBuilder.DungeonCompleteAction += OnDungeonCompleted;
     }
@@ -69,7 +74,7 @@ public partial class Room : Node2D
     #region Callback
     void OnDungeonCompleted()
     {
-        if (_body.IsValid() == false)
+        if (this.IsValid() == false)
             return;
         //todo : collision deacitvated or queue free
 
