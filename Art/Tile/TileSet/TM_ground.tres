@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" load_steps=4 format=3 uid="uid://di14t8jp4oehk"]
 
-[ext_resource type="Texture2D" uid="uid://dnaedme51hqam" path="res://Art/Tile/TileSheet/dungeon_tiles-export.png" id="1_o66bv"]
+[ext_resource type="Texture2D" uid="uid://dnaedme51hqam" path="res://dungeon_tiles-export.png" id="1_o66bv"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_vnul2"]
 tile_data = PackedInt32Array(65536, 458752, 7, 1, 589824, 5, 65537, 524288, 7)
