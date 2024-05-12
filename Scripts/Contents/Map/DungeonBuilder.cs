@@ -101,29 +101,21 @@ public partial class DungeonBuilder : Node
 
         delaunator = new Delaunator(points);
 
-        //todo: make MST
-
-        //todo : plus some edge to MST
         //1. adjacent list
-        bool[] visited = new bool[points.Length];
+        System.Collections.Generic.Dictionary<int, List<int>> visited =  new System.Collections.Generic.Dictionary<int, List<int>>();
         PriorityQueue<Define.GridPoint, int> pq = new PriorityQueue<Define.GridPoint, int>();
 
-        foreach (Triangle tri in delaunator.GetTriangles())
+        var PointToVector = (IPoint point) =>  { return new Vector2 { X = (float)point.X, Y = (float)point.Y }; };
+        
+
+
+        foreach (IEdge edge in delaunator.GetEdges())
         {
-            delaunator.ForEachTriangleEdge((IEdge edge) =>
-            {
-                if (edge.Index > delaunator.Halfedges[edge.Index])
-                {
-                    //draw line p-q
-                    var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-                    var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-                    
-                    
-
-                }
-            });
+            var p = PointToVector(edge.P);
+            var q = PointToVector(edge.Q);
+            var idx = (edge.P as Define.GridPoint).Index;
+            GD.Print(idx);
         }
-
 
         //todo :make edge to road.
         //_delaunator.ForEachTriangleEdge(edge => { });
