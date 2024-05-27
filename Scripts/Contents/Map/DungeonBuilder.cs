@@ -92,29 +92,30 @@ public partial class DungeonBuilder : Node
         await this.WaitForSeconds(1f, processInPhysics: true);
 
         //delaunary main Rooms
-        //Define.GridPoint[] points = selected.Select( room =>  room.GlobalPosition.ToVector2I().ToGridPoint() ).ToArray();
-        Define.GridPoint[] points = selectedRooms.Select((room, i) =>
-        { return new Define.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i }; }
+        DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
+        { return new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i }; }
         ).ToArray();
 
-        delaunator = new Delaunator(points);
+        delaunator = new Delaunator(selectedPoints);
 
-        //TODO  : Kruscal MST
+        //TODO  : Kruskal MST
+        //var edges = delaunator.GetEdges();
+        //PriorityQueue<IEdge, float> edgeQueue = new PriorityQueue<IEdge, float>();
+        //List<IDisJointable> disJointables = new List<IDisJointable>();
+        //foreach (IEdge edge in edges)
+        //{
+        //    var tmp = edge as DelaunatorEx.Edge;
+        //    tmp.Parent = tmp;
+        //    disJointables.Add(tmp);
+        //    edgeQueue.Enqueue(tmp, tmp.Length());
+        //}
 
-        System.Collections.Generic.Dictionary<int, List<int>> visited =  new System.Collections.Generic.Dictionary<int, List<int>>();
-        PriorityQueue<IEdge, float> edgeQueue = new PriorityQueue<IEdge, float>();
-
-        foreach (IEdge edge in delaunator.GetEdges())
-        {
-            edgeQueue.Enqueue(edge, edge.Length());
-        }
         //todo :make edge to road.
         
         //draw triange
         DrawTriangles(delaunator);
 
         //mst
-        GridPoint now = points.First(p => p.Index == 0);
 
 
         //dugeon build finished
@@ -164,11 +165,11 @@ public partial class DungeonBuilder : Node
             int lack = MinMainRoomCount - groupRoom[true].Count;
             groupRoom[true].AddRange(
                 groupRoom[false].OrderBy(room => room.Size.Length())
-                .Where((room, idx) => idx < lack)
+                .Where((room, cnt)  => cnt < lack)
                 );
         }
 
-        //select Main Rooms
+        //Coloring Main Rooms 
         foreach(var room in groupRoom[true])
         {
             room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
