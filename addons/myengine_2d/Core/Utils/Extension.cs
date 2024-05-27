@@ -2,6 +2,7 @@ using Define;
 using Godot;
 using Godot.Collections;
 using System;
+using System.Reflection;
 using System.Text;
 
 public static class Extension 
@@ -74,26 +75,37 @@ public static class Extension
     /// <summary>
     ///  Find or Add this Node's child with name.
     /// </summary>
-    public static T GetorAddChildByName<T>(this Node node, string name, bool recursive = true) where T : Node, new()
+    public static T GetorAddChildByName<T>(this Node parent, string name, bool recursive = true) where T : Node, new()
     {
-        T child = node.FindChild(name, recursive) as T;
+        T child = parent.FindChild(name, recursive) as T;
 
         if (child != null)
             return child;
         child = new T();
-        node.AddChild(child);
+        parent.AddChild(child);
         return child;
     }
 
-    public static T GetOrAddChildByType<T>(this Node node, bool recursive = true) where T : Node
+    public static T GetOrAddChildByType<T>(this Node parent, bool recursive = true) where T : Node, new()
     {
-        T child = TryGetChildByType<T>(node, recursive);
+        T child = TryGetChildByType<T>(parent, recursive);
+        if (child != null)
+            return child;
+        child = new T();
+        parent.AddChild(child);
+        return child;
+    }
+
+    public static T GetOrAddChildBySceneType<T>(this Node parent, bool recursive = true) where T : Node
+    {
+        T child = TryGetChildByType<T>(parent, recursive);
 
         if (child != null)
             return child;
 
         PackedScene scn = Managers.Resource.LoadPackedScene<T>(Define.Scenes.Nodes);
-        child = Managers.Resource.Instantiate<T> (scn, node);
+        if(scn != null)
+        child = Managers.Resource.Instantiate<T> (scn, parent);
         return child;
     }
    

@@ -53,6 +53,11 @@ public partial class DungeonBuilder : Node
 
         Task.Run(() => { GenerateDungeon(); });
         //todp :tilemap
+
+        TileMap tilemap =  this.GetChildByType<TileMap>();
+
+
+        //tilemap.SetCellsTerrainConnect(, terrainSet: 0, terrain: 0);
     }
 
     void Bind()
@@ -124,10 +129,8 @@ public partial class DungeonBuilder : Node
             if (dsj.IsUnion(nowP, nowQ) == false)
             {
                 dsj.Union(nowP, nowQ);
-                GD.Print($"{nowP.Index} , {nowQ.Index} selected");
-
                 DrawEdges(now);
-
+                selectedEdge.Add(now);
                 cnt++;
             }
         };
@@ -136,14 +139,15 @@ public partial class DungeonBuilder : Node
         {
             SelectEdge(pq.Dequeue());
         }
+        //adding some edge 
+        for( int i = 0; i < Mathf.Max(1, selectedEdge.Count() / 4) ; i++)
+        {
+            var now = pq.Dequeue();
+            DrawEdges(now, Colors.Yellow);
+            selectedEdge.Add(now);
+        }
 
         //todo :make edge to road.
-
-        //draw triange
-        //DrawTriangles(delaunator);
-
-        //mst
-
 
         //dugeon build finished
         DungeonCompleteAction.Invoke();

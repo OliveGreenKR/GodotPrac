@@ -7,7 +7,6 @@ tile_data = PackedInt32Array(65536, 458752, 7, 1, 589824, 5, 65537, 524288, 7)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xpes1"]
 texture = ExtResource("1_o66bv")
-texture_region_size = Vector2i(1, 1)
 1:1/0 = 0
 1:1/0/terrain_set = 0
 1:1/0/terrain = 0
