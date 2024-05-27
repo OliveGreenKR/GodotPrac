@@ -49,10 +49,7 @@ public partial class DungeonBuilder : Node
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
 
-        //TODO::Loading For Generating Dungeon
         Task.Run(() => { GenerateDungeon(); });
-
-        GD.Print("ReadyDone");
         //todp :tilemap
     }
 
@@ -105,22 +102,14 @@ public partial class DungeonBuilder : Node
         System.Collections.Generic.Dictionary<int, List<int>> visited =  new System.Collections.Generic.Dictionary<int, List<int>>();
         PriorityQueue<Define.GridPoint, int> pq = new PriorityQueue<Define.GridPoint, int>();
 
-        var PointToVector = (IPoint point) =>  { return new Vector2 { X = (float)point.X, Y = (float)point.Y }; };
-        
-
-
         foreach (IEdge edge in delaunator.GetEdges())
         {
-            var p = PointToVector(edge.P);
-            var q = PointToVector(edge.Q);
             var idx = (edge.P as Define.GridPoint).Index;
             GD.Print(idx);
         }
 
         //todo :make edge to road.
-        //_delaunator.ForEachTriangleEdge(edge => { });
-
-
+        
         //draw triange
         DrawTriangles(delaunator);
 
@@ -139,10 +128,8 @@ public partial class DungeonBuilder : Node
                 if (edge.Index > delaunator.Halfedges[edge.Index])
                 {
                     //draw line p-q
-                    var p1 = new Vector2((int)edge.P.X, (int)edge.P.Y);
-                    var p2 = new Vector2((int)edge.Q.X, (int)edge.Q.Y);
-                    drawer.AddPoint(p1);
-                    drawer.AddPoint(p2);
+                    drawer.AddPoint(edge.P.ToVector2());
+                    drawer.AddPoint(edge.Q.ToVector2());
                 }
             });
         }
