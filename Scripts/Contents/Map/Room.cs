@@ -7,6 +7,7 @@ public partial class Room : RigidBody2D
 
     Define.RoomTypes _type;
     Vector2I _size;
+
     [Export]
     public Vector2I Size
     {

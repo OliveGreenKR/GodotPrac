@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using MEC;
+using Define;
 
 public partial class DungeonBuilder : Node
 {
@@ -85,33 +86,35 @@ public partial class DungeonBuilder : Node
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
 
-        List<Room> selected = SelectMainRooms(tmpRooms, standard);
+        List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
         
         //wait for positioning Rooms
         await this.WaitForSeconds(1f, processInPhysics: true);
 
         //delaunary main Rooms
         //Define.GridPoint[] points = selected.Select( room =>  room.GlobalPosition.ToVector2I().ToGridPoint() ).ToArray();
-        Define.GridPoint[] points = selected.Select((room, i) =>
+        Define.GridPoint[] points = selectedRooms.Select((room, i) =>
         { return new Define.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i }; }
         ).ToArray();
 
         delaunator = new Delaunator(points);
 
-        //1. adjacent list
+        //TODO  : Kruscal MST
+
         System.Collections.Generic.Dictionary<int, List<int>> visited =  new System.Collections.Generic.Dictionary<int, List<int>>();
-        PriorityQueue<Define.GridPoint, int> pq = new PriorityQueue<Define.GridPoint, int>();
+        PriorityQueue<IEdge, float> edgeQueue = new PriorityQueue<IEdge, float>();
 
         foreach (IEdge edge in delaunator.GetEdges())
         {
-            var idx = (edge.P as Define.GridPoint).Index;
-            GD.Print(idx);
+            edgeQueue.Enqueue(edge, edge.Length());
         }
-
         //todo :make edge to road.
         
         //draw triange
         DrawTriangles(delaunator);
+
+        //mst
+        GridPoint now = points.First(p => p.Index == 0);
 
 
         //dugeon build finished
@@ -121,17 +124,12 @@ public partial class DungeonBuilder : Node
     void DrawTriangles( Delaunator delaunator)
     {
         Line2D drawer = this.GetOrAddChildByType<Line2D>();
-        foreach (Triangle tri in delaunator.GetTriangles())
+
+        foreach (IEdge edge in delaunator.GetEdges())
         {
-            delaunator.ForEachTriangleEdge((IEdge edge) =>
-            {
-                if (edge.Index > delaunator.Halfedges[edge.Index])
-                {
-                    //draw line p-q
-                    drawer.AddPoint(edge.P.ToVector2());
-                    drawer.AddPoint(edge.Q.ToVector2());
-                }
-            });
+            drawer.AddPoint(edge.P.ToVector2());
+            drawer.AddPoint(edge.Q.ToVector2());
+            GD.Print($"{edge.Index} : drawed");
         }
     }
 

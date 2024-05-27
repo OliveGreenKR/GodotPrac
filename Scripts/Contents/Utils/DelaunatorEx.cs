@@ -8,7 +8,7 @@ public static class DelaunatorEx
         return new Vector2 { X = (float)point.X, Y = (float)point.Y };
     }
 
-    public static float Length( IEdge edge)
+    public static float Length( this IEdge edge)
     {
         return (edge.Q.ToVector2() - edge.P.ToVector2()).Length();
     }
