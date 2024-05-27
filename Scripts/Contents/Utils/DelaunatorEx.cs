@@ -13,7 +13,7 @@ public static class DelaunatorEx
         return (edge.Q.ToVector2() - edge.P.ToVector2()).Length();
     }
 
-    public class GridPoint : IPoint
+    public class GridPoint : IPoint, IDisJointable
     {
         Vector2 _vec;
 
@@ -23,19 +23,10 @@ public static class DelaunatorEx
         public double X { get => _vec.X; set => _vec.X = (int)value; }
         public double Y { get => _vec.Y; set => _vec.Y = (int)value; }
 
+        public IDisJointable Parent { get; set; } 
+
         static public implicit operator GridPoint(Vector2I vec) { return new GridPoint { Vector = vec }; }
         static public implicit operator Vector2(GridPoint gp) { return new Vector2 { X = (float)gp.X, Y = (float)gp.Y }; }
-    }
-
-    public class Edge : IEdge, IDisJointable
-    {
-        public IPoint P { get; set; }
-
-        public IPoint Q { get; set; }
-
-        public int Index { get; set; }
-
-        public IDisJointable Parent { get; set; } = null; 
     }
 
 }

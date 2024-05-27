@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MEC;
 using Define;
+using static System.Net.Mime.MediaTypeNames;
 
 public partial class DungeonBuilder : Node
 {
@@ -79,41 +80,67 @@ public partial class DungeonBuilder : Node
         for (int i = 0; i < RoomCount; i++)
         {
             Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
-            var tmp = GenerateRoomRandomlyAt(pos);
-            tmpRooms.Add(tmp);
-            _TypeRooms[tmp.RoomType].AddChild(tmp, true);
+            var tmpRoom = GenerateRoomRandomlyAt(pos);
+            tmpRooms.Add(tmpRoom);
+            _TypeRooms[tmpRoom.RoomType].AddChild(tmpRoom, true);
         }
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
 
         List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
+        GD.Print($"selected  room count : {selectedRooms.Count}");
         
         //wait for positioning Rooms
         await this.WaitForSeconds(1f, processInPhysics: true);
 
         //delaunary main Rooms
         DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
-        { return new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i }; }
+        { 
+            var tmp = new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i };
+            tmp.Parent = tmp;
+            return tmp;
+        }
         ).ToArray();
 
         delaunator = new Delaunator(selectedPoints);
 
         //TODO  : Kruskal MST
-        //var edges = delaunator.GetEdges();
-        //PriorityQueue<IEdge, float> edgeQueue = new PriorityQueue<IEdge, float>();
-        //List<IDisJointable> disJointables = new List<IDisJointable>();
-        //foreach (IEdge edge in edges)
-        //{
-        //    var tmp = edge as DelaunatorEx.Edge;
-        //    tmp.Parent = tmp;
-        //    disJointables.Add(tmp);
-        //    edgeQueue.Enqueue(tmp, tmp.Length());
-        //}
+        var edges = delaunator.GetEdges();
+        PriorityQueue<IEdge, float> pq = new PriorityQueue<IEdge, float>();
+        List<IEdge> selectedEdge = new List<IEdge>();  
+
+        foreach (IEdge edge in edges)
+        {
+            pq.Enqueue(edge, edge.Length());
+        }
+
+
+        var dsj = new DisJointSet();
+        int cnt = 0;
+        var SelectEdge = (IEdge now) => 
+        {
+            var nowP = now.P as DelaunatorEx.GridPoint;
+            var nowQ = now.Q as DelaunatorEx.GridPoint;
+            if (dsj.IsUnion(nowP, nowQ) == false)
+            {
+                dsj.Union(nowP, nowQ);
+                GD.Print($"{nowP.Index} , {nowQ.Index} selected");
+
+                DrawEdges(now);
+
+                cnt++;
+            }
+        };
+
+        while (cnt != selectedRooms.Count - 1)
+        {
+            SelectEdge(pq.Dequeue());
+        }
 
         //todo :make edge to road.
-        
+
         //draw triange
-        DrawTriangles(delaunator);
+        //DrawTriangles(delaunator);
 
         //mst
 
@@ -122,14 +149,25 @@ public partial class DungeonBuilder : Node
         DungeonCompleteAction.Invoke();
     }
 
+    void DrawEdges( IEdge edge , Color? color = null)
+    {
+        Line2D drawer = new Line2D();
+        drawer.Width = 2;
+        
+        if (color == null)
+            drawer.DefaultColor = Colors.White;
+        else
+            drawer.DefaultColor = (Godot.Color)color;
+        drawer.AddPoint(edge.P.ToVector2());
+        drawer.AddPoint(edge.Q.ToVector2());
+        this.AddChild(drawer);
+    }
+
     void DrawTriangles( Delaunator delaunator)
     {
-        Line2D drawer = this.GetOrAddChildByType<Line2D>();
-
         foreach (IEdge edge in delaunator.GetEdges())
         {
-            drawer.AddPoint(edge.P.ToVector2());
-            drawer.AddPoint(edge.Q.ToVector2());
+            DrawEdges(edge);
             GD.Print($"{edge.Index} : drawed");
         }
     }

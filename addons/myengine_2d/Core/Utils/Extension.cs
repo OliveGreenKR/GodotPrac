@@ -202,9 +202,9 @@ public static class Extension
         return new Vector3I((int)vector.X, (int)vector.Y, (int)vector.Z);
     }
 
-    public static Define.GridPoint ToGridPoint(this Vector2I vec)
+    public static DelaunatorEx.GridPoint ToGridPoint(this Vector2I vec)
     {
-        return new Define.GridPoint { Vector = (Vector2I)vec };
+        return new DelaunatorEx.GridPoint { Vector = (Vector2I)vec };
     }
     #endregion
 }
