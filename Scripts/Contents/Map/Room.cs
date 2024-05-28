@@ -8,6 +8,8 @@ public partial class Room : RigidBody2D
     Define.RoomTypes _type;
     Vector2I _size;
 
+    public bool IsSelected { get; set; } = false;
+
     [Export]
     public Vector2I Size
     {
@@ -72,14 +74,17 @@ public partial class Room : RigidBody2D
         this.GetChildByType<CollisionShape2D>().Shape = rect;
     }
 
-    #region Callback
     void OnDungeonCompleted()
     {
-        if (this.IsValid() == false)
-            return;
-        //todo : collision deacitvated or queue free
+        if (IsSelected == false)
+            this.QueueFree();
+        else
+        {
+            this.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
+            this.GetChildByType<RigidBody2D>().Freeze = true;
+        }
 
     }
-    #endregion
+
 
 }

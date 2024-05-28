@@ -42,7 +42,7 @@ public partial class DungeonBuilder : Node
     PackedScene _roomInstance;
     Godot.Collections.Dictionary<Define.RoomTypes, Node> _TypeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         _rand.Seed = Seed ?? (ulong)DateTime.Now.Ticks;
 
@@ -110,53 +110,17 @@ public partial class DungeonBuilder : Node
         ).ToArray();
 
         delaunator = new Delaunator(selectedPoints);
+        var selectedEdge = delaunator.MakeMstKruskal();
 
-        //TODO  : Kruskal MST
-        var edges = delaunator.GetEdges();
-        PriorityQueue<IEdge, float> pq = new PriorityQueue<IEdge, float>();
-        List<IEdge> selectedEdge = new List<IEdge>();  
-
-        foreach (IEdge edge in edges)
-        {
-            pq.Enqueue(edge, edge.Length());
-        }
-
-
-        var dsj = new DisJointSet();
-        int cnt = 0;
-        var SelectEdge = (IEdge now) => 
-        {
-            var nowP = now.P as DelaunatorEx.GridPoint;
-            var nowQ = now.Q as DelaunatorEx.GridPoint;
-            if (dsj.IsUnion(nowP, nowQ) == false)
-            {
-                dsj.Union(nowP, nowQ);
-                selectedEdge.Add(now);
-                cnt++;
-            }
-        };
-
-        while (cnt != selectedRooms.Count - 1)
-        {
-            SelectEdge(pq.Dequeue());
-        }
-        //adding some edge 
-        for( int i = 0; i < Mathf.Max(1, selectedEdge.Count() / 4) ; i++)
-        {
-            var now = pq.Dequeue();
-            selectedEdge.Add(now);
-        }
-
-        foreach(IEdge edge in selectedEdge)
+        foreach (IEdge edge in selectedEdge)
         {
             DrawEdges(edge, Colors.Green);
         }
 
-
         //todo :make edge to road.
 
         //dugeon build finished
-        DungeonCompleteAction.Invoke();
+        //DungeonCompleteAction.Invoke();
     }
 
     #region debug-visualization
@@ -219,18 +183,9 @@ public partial class DungeonBuilder : Node
             groupRoom[true] = groupRoom[true].GetRange(0, MaxMainRoomCount);
         }
 
-        //Coloring Main Rooms 
         foreach (var room in groupRoom[true])
         {
-            room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
-            room.GetTree().CreateTimer(0.5f).Timeout += () => { room.GetChildByType<RigidBody2D>().Freeze = true; };
-            
-        }
-
-        //delete unselected rooms
-        foreach ( var room in groupRoom[false])
-        {
-            room.GetTree().CreateTimer(0.7f).Timeout += () => { room.QueueFree(); };
+            room.IsSelected = true;
         }
 
         return groupRoom[true];
