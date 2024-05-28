@@ -106,7 +106,6 @@ public partial class DungeonCalculator : Node
         foreach (IEdge edge in delaunator.GetEdges())
         {
             DrawEdges(edge);
-            GD.Print($"{edge.Index} : drawed");
         }
     }
     #endregion

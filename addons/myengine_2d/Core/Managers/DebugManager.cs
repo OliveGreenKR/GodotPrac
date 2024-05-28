@@ -12,6 +12,9 @@ public class DebugManager
 
     public MeshInstance3D DrawLine3D(Vector3 from, Vector3 to, Color? color = null)
     {
+        if (EngineDebugger.IsActive() == false)
+            return null;
+
         var meshInstance = new MeshInstance3D();
         var immediateMesh = new ImmediateMesh();
         var material = new StandardMaterial3D();
@@ -34,6 +37,9 @@ public class DebugManager
 
     public MeshInstance3D DrawPoint3D(Vector3 pos, float radius = 0.05f, Color? color = null)
     {
+        if (EngineDebugger.IsActive() == false)
+            return null;
+
         var meshInstance = new MeshInstance3D();
         var sphereMesh = new SphereMesh();
         var material = new StandardMaterial3D();
@@ -56,6 +62,9 @@ public class DebugManager
 
     public Line2D DrawLine2D( Vector2 from, Vector2 to, float width = 2.0f , Color? color = null)
     {
+        if (EngineDebugger.IsActive() == false)
+            return null;
+
         Line2D drawer = new Line2D();
         drawer.Width = width;
 
