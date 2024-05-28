@@ -6,8 +6,9 @@
 [node name="DungeonBuilder" type="Node2D"]
 script = ExtResource("1_il8nd")
 TileSize = 16
-RoomCount = 24
+GenerateRoomCount = 40
 MinMainRoomCount = 6
+MaxMainRoomCount = -1
 MaxRoomSize = 10
 MinRoomSize = 3
 

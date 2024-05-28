@@ -19,9 +19,11 @@ public partial class DungeonBuilder : Node
     [Export]
     public Godot.Vector2I DuegonSize { get; set; } = new Godot.Vector2I(200, 100);
     [Export]
-    public int RoomCount { get; set; }
+    public int GenerateRoomCount { get; set; }
     [Export]
     public int MinMainRoomCount { get; set; }
+    [Export]
+    public int MaxMainRoomCount { get; set; }
     [Export]
     public int MaxRoomSize { get; set; }
     [Export]
@@ -82,7 +84,7 @@ public partial class DungeonBuilder : Node
         List<Room> tmpRooms = new List<Room>();
         Delaunator delaunator;
         //generating room
-        for (int i = 0; i < RoomCount; i++)
+        for (int i = 0; i < GenerateRoomCount; i++)
         {
             Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
             var tmpRoom = GenerateRoomRandomlyAt(pos);
@@ -199,25 +201,28 @@ public partial class DungeonBuilder : Node
         var groupRoom = rooms.GroupBy(room => room.Size.Length() > standard)
             .ToDictionary(g => g.Key , g => g.ToList());
 
-        var selected = groupRoom[true];
+        
 
-        //fill in the shortfall
+        //main room count management
         if (groupRoom[true].Count < MinMainRoomCount)
         {
             int lack = MinMainRoomCount - groupRoom[true].Count;
             groupRoom[true].AddRange(
                 groupRoom[false].OrderBy(room => room.Size.Length())
-                .Where((room, cnt)  => cnt < lack)
+                .Where((room, cnt) => cnt < lack)
                 );
+        } else if ( MaxMainRoomCount > MinMainRoomCount &&  groupRoom[true].Count > MaxMainRoomCount)
+        {
+            groupRoom[true] = groupRoom[true].GetRange(0, MaxMainRoomCount);
         }
 
         //Coloring Main Rooms 
-        foreach(var room in groupRoom[true])
+        foreach (var room in groupRoom[true])
         {
             room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
         }
 
-        return selected;
+        return groupRoom[true];
     }
 
     #region Math
