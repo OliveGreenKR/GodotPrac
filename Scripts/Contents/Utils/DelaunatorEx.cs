@@ -34,7 +34,7 @@ public static class DelaunatorEx
     /// <summary>
     /// Making a MST based on Edge Length.and return selected Edge
     /// </summary>
-    public static List<IEdge> MakeMstKruskal(this Delaunator delaunator, int nodeCount = -1)
+    public static List<IEdge> MakeMstKruskal(this Delaunator delaunator, bool addSomeExtra = false, int nodeCount = -1)
     {
         var edges = delaunator.GetEdges();
         PriorityQueue<IEdge, float> pq = new PriorityQueue<IEdge, float>();
@@ -67,10 +67,13 @@ public static class DelaunatorEx
             SelectEdge(pq.Dequeue());
         }
         //adding some edge 
-        for (int i = 0; i < Mathf.Max(1, selectedEdge.Count() / 4); i++)
+        if (addSomeExtra)
         {
-            var now = pq.Dequeue();
-            selectedEdge.Add(now);
+            for (int i = 0; i < Mathf.Max(1, selectedEdge.Count() / 4); i++)
+            {
+                var now = pq.Dequeue();
+                selectedEdge.Add(now);
+            }
         }
 
         return selectedEdge;

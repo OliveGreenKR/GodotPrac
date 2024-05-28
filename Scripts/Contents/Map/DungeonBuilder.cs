@@ -110,7 +110,7 @@ public partial class DungeonBuilder : Node
         ).ToArray();
 
         delaunator = new Delaunator(selectedPoints);
-        var selectedEdge = delaunator.MakeMstKruskal();
+        var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
 
         foreach (IEdge edge in selectedEdge)
         {
