@@ -14,11 +14,6 @@ public partial class Room : RigidBody2D, IGeneratableScene
         room.Size = size;
         room.RoomType = type;
 
-        //room.SetScript(ResourceLoader.Load("res://Scripts/Contents/Map/Room.cs"));
-        //room.Name = typeof(Room).Name;
-        //room.Size = size;
-        //room.RoomType = type;
-
         return room;
     }
 

@@ -10,4 +10,14 @@ public class Utils
             return null;
         return parent.GetChildByType<T>(recursive);
     }
+
+    public static int RoundTileSize(float n)
+    {
+        return RoundIntSize(n, Managers.Tile.TileSize);
+    }
+
+    public static int RoundIntSize(float n, int size)
+    {
+        return Mathf.FloorToInt(((n + size - 1) / size) * size);
+    }
 }

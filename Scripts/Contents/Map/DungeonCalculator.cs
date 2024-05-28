@@ -173,18 +173,12 @@ public partial class DungeonCalculator : Node
         float u = Managers.Random.Randf() + Managers.Random.Randf();
         float r = u > 1 ? 2 - u : u;
 
-        int x = RoundTileSize(size.X * r * Mathf.Cos(theta), Managers.Tile.TileSize);
-        int y = RoundTileSize(size.Y * r * Mathf.Sin(theta), Managers.Tile.TileSize);
+        int x = Utils.RoundTileSize(size.X * r * Mathf.Cos(theta));
+        int y = Utils.RoundTileSize(size.Y * r * Mathf.Sin(theta));
         return new Godot.Vector2I(x, y);
     }
 
-    /// <summary>
-    /// round N to Multiples of M
-    /// </summary>
-    int RoundTileSize(float n, int tileSize)
-    {
-        return Mathf.FloorToInt(((n + tileSize - 1) / tileSize) * tileSize);
-    }
+
     #endregion
 
 }
