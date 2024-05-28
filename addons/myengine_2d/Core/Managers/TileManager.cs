@@ -1,7 +1,10 @@
 using Godot;
 using System;
 
-public partial class TileManager
+public class TileManager
 {
-    public int TileSize { get; private set; } = 16;
+    int _tileSize = 16;
+    public int TileSize { get { return _tileSize; } }
+
+    
 }

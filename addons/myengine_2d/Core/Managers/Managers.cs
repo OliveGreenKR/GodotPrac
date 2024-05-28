@@ -8,10 +8,10 @@ public partial class Managers : Node
 
     #region Contents
     TileManager _tile = new TileManager();
-    TileManager Tile {  get {  return s_instance.Tile; } } 
+    public static TileManager Tile {  get {  return s_instance._tile; } } 
 
     RandomNumberGenerator _rand = new RandomNumberGenerator();
-    RandomNumberGenerator Random { get { return s_instance._rand; } } 
+    public static RandomNumberGenerator Random { get { return s_instance._rand; } } 
 
     #endregion
 

@@ -12,8 +12,6 @@ public partial class DungeonCalculator : Node
     public static Action DungeonCalculationCompleteAction = () => { };
 
     [Export]
-    public int TileSize { get; set; } = 16;
-    [Export]
     public Godot.Vector2I DungeonSize { get; set; } = new Godot.Vector2I(200, 100);
     [Export]
     public int GenerateRoomCount { get; set; } = 35;
@@ -26,16 +24,11 @@ public partial class DungeonCalculator : Node
     [Export]
     public int MinRoomSize { get; set; } = 4;
 
-    public ulong? Seed { get; private set; }
-
-    //random gernerator
-    RandomNumberGenerator _rand = new RandomNumberGenerator();
     //room
     Godot.Collections.Dictionary<Define.RoomTypes, Node> _typeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
 
     public override async void _Ready()
     {
-        _rand.Seed = Seed ?? (ulong)DateTime.Now.Ticks;
         Bind();
 
         await Task.Run(() => { GenerateDungeon(); });
@@ -75,7 +68,7 @@ public partial class DungeonCalculator : Node
         await this.WaitForSeconds(1f, processInPhysics: true);
 
         //select main rooms
-        float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
+        float standard = new Vector2I(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize).Length() * 1f;
 
         List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
         GD.Print($"selected  room count : {selectedRooms.Count}");
@@ -128,8 +121,8 @@ public partial class DungeonCalculator : Node
     //generate Single Room
     Room GenerateRoomRandomSizedAt(Godot.Vector2 position)
     {
-        var size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
-                                 _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
+        var size = new Vector2I(Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize),
+                                 Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize));
         Room room = Room.New(size);
         room.Position = position;
         return room;
@@ -176,12 +169,12 @@ public partial class DungeonCalculator : Node
 
     Godot.Vector2I GetRandomPointInEllipse(Godot.Vector2I size)
     {
-        float theta = 2 * Mathf.Pi * _rand.Randf();
-        float u = _rand.Randf() + _rand.Randf();
+        float theta = 2 * Mathf.Pi * Managers.Random.Randf();
+        float u = Managers.Random.Randf() + Managers.Random.Randf();
         float r = u > 1 ? 2 - u : u;
 
-        int x = RoundTileSize(size.X * r * Mathf.Cos(theta), TileSize);
-        int y = RoundTileSize(size.Y * r * Mathf.Sin(theta), TileSize);
+        int x = RoundTileSize(size.X * r * Mathf.Cos(theta), Managers.Tile.TileSize);
+        int y = RoundTileSize(size.Y * r * Mathf.Sin(theta), Managers.Tile.TileSize);
         return new Godot.Vector2I(x, y);
     }
 
