@@ -131,7 +131,6 @@ public partial class DungeonBuilder : Node
             if (dsj.IsUnion(nowP, nowQ) == false)
             {
                 dsj.Union(nowP, nowQ);
-                DrawEdges(now);
                 selectedEdge.Add(now);
                 cnt++;
             }
@@ -145,9 +144,14 @@ public partial class DungeonBuilder : Node
         for( int i = 0; i < Mathf.Max(1, selectedEdge.Count() / 4) ; i++)
         {
             var now = pq.Dequeue();
-            DrawEdges(now, Colors.Yellow);
             selectedEdge.Add(now);
         }
+
+        foreach(IEdge edge in selectedEdge)
+        {
+            DrawEdges(edge, Colors.Green);
+        }
+
 
         //todo :make edge to road.
 
@@ -155,6 +159,7 @@ public partial class DungeonBuilder : Node
         DungeonCompleteAction.Invoke();
     }
 
+    #region debug-visualization
     void DrawEdges( IEdge edge , Color? color = null)
     {
         Line2D drawer = new Line2D();
@@ -177,11 +182,11 @@ public partial class DungeonBuilder : Node
             GD.Print($"{edge.Index} : drawed");
         }
     }
+    #endregion
 
     //generate Single Room
     Room GenerateRoomRandomlyAt(Godot.Vector2 position)
     {
-        //--------[1]init Room  at point with random size
         Room room = Managers.Resource.Instantiate<Room>(_roomInstance,null);
         room.Size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
                                  _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
@@ -201,8 +206,6 @@ public partial class DungeonBuilder : Node
         var groupRoom = rooms.GroupBy(room => room.Size.Length() > standard)
             .ToDictionary(g => g.Key , g => g.ToList());
 
-        
-
         //main room count management
         if (groupRoom[true].Count < MinMainRoomCount)
         {
@@ -220,6 +223,14 @@ public partial class DungeonBuilder : Node
         foreach (var room in groupRoom[true])
         {
             room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
+            room.GetTree().CreateTimer(0.5f).Timeout += () => { room.GetChildByType<RigidBody2D>().Freeze = true; };
+            
+        }
+
+        //delete unselected rooms
+        foreach ( var room in groupRoom[false])
+        {
+            room.GetTree().CreateTimer(0.7f).Timeout += () => { room.QueueFree(); };
         }
 
         return groupRoom[true];
