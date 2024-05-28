@@ -96,16 +96,9 @@ public partial class DungeonCalculator : Node
     #region debug-visualization
     void DrawEdges( IEdge edge , Color? color = null)
     {
-        Line2D drawer = new Line2D();
-        drawer.Width = 2;
-        
-        if (color == null)
-            drawer.DefaultColor = Colors.White;
-        else
-            drawer.DefaultColor = (Godot.Color)color;
-        drawer.AddPoint(edge.P.ToVector2());
-        drawer.AddPoint(edge.Q.ToVector2());
-        this.AddChild(drawer);
+        var from = edge.P.ToVector2();
+        var to = edge.Q.ToVector2();
+        Managers.Debug.DrawLine2D(from, to, color : color);
     }
 
     void DrawTriangles( Delaunator delaunator)

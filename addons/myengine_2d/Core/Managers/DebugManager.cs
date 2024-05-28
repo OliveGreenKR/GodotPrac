@@ -1,3 +1,4 @@
+using DelaunatorSharp;
 using Godot;
 using System;
 
@@ -5,9 +6,11 @@ public class DebugManager
 {
     Node _node = new Node();
 
+    Color _defaultColor = Colors.WhiteSmoke;
+
     public Node Node { get { return _node; } }  
 
-    public MeshInstance3D DrawLine3D(Vector3 pos1, Vector3 pos2, Color? color = null)
+    public MeshInstance3D DrawLine3D(Vector3 from, Vector3 to, Color? color = null)
     {
         var meshInstance = new MeshInstance3D();
         var immediateMesh = new ImmediateMesh();
@@ -17,12 +20,12 @@ public class DebugManager
         meshInstance.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
 
         immediateMesh.SurfaceBegin(Mesh.PrimitiveType.Lines, material);
-        immediateMesh.SurfaceAddVertex(pos1);
-        immediateMesh.SurfaceAddVertex(pos2);
+        immediateMesh.SurfaceAddVertex(from);
+        immediateMesh.SurfaceAddVertex(to);
         immediateMesh.SurfaceEnd();
 
         material.ShadingMode = StandardMaterial3D.ShadingModeEnum.Unshaded;
-        material.AlbedoColor = color ?? Colors.WhiteSmoke;
+        material.AlbedoColor = color ?? _defaultColor;
 
         _node.AddChild(meshInstance);
 
@@ -44,11 +47,26 @@ public class DebugManager
         sphereMesh.Material = material;
 
         material.ShadingMode = StandardMaterial3D.ShadingModeEnum.Unshaded;
-        material.AlbedoColor = color ?? Colors.WhiteSmoke;
+        material.AlbedoColor = color ?? _defaultColor;
 
         _node.AddChild(meshInstance);
 
         return meshInstance;
     }
 
+    public Line2D DrawLine2D( Vector2 from, Vector2 to, float width = 2.0f , Color? color = null)
+    {
+        Line2D drawer = new Line2D();
+        drawer.Width = width;
+
+        if (color == null)
+            drawer.DefaultColor = _defaultColor;
+        else
+            drawer.DefaultColor = (Godot.Color)color;
+        drawer.AddPoint(from);
+        drawer.AddPoint(to);
+        _node.AddChild(drawer);
+
+        return drawer;
+    }
 }
