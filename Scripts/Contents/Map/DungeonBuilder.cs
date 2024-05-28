@@ -40,7 +40,7 @@ public partial class DungeonBuilder : Node
 
     #endregion
     //room
-    PackedScene _roomInstance;
+    
     Godot.Collections.Dictionary<Define.RoomTypes, Node> _TypeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
 
     public override async void _Ready()
@@ -49,8 +49,6 @@ public partial class DungeonBuilder : Node
 
         _tileMap = this.GetChildByType<TileMap>();
         _tileMap.RenderingQuadrantSize = TileSize;
-        _roomInstance = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
-
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
 
@@ -90,7 +88,7 @@ public partial class DungeonBuilder : Node
         for (int i = 0; i < GenerateRoomCount; i++)
         {
             Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
-            var tmpRoom = GenerateRoomRandomlyAt(pos);
+            var tmpRoom = GenerateRoomRandomSizedAt(pos);
             tmpRooms.Add(tmpRoom);
             _TypeRooms[tmpRoom.RoomType].AddChild(tmpRoom, true);
         }
@@ -149,11 +147,11 @@ public partial class DungeonBuilder : Node
     #endregion
 
     //generate Single Room
-    Room GenerateRoomRandomlyAt(Godot.Vector2 position)
+    Room GenerateRoomRandomSizedAt(Godot.Vector2 position)
     {
-        Room room = Managers.Resource.Instantiate<Room>(_roomInstance,null);
-        room.Size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
+        var size = new Vector2I(_rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize),
                                  _rand.RandiRange(MinRoomSize * TileSize, MaxRoomSize * TileSize));
+        Room room = Room.New(size);
         room.Position = position;
         return room;
     }
