@@ -7,11 +7,16 @@ public partial class Managers : Node
     static Managers Instance { get { return s_instance; } }
 
     #region Contents
+    TileManager _tile = new TileManager();
+    TileManager Tile {  get {  return s_instance.Tile; } } 
+
+    RandomNumberGenerator _rand = new RandomNumberGenerator();
+    RandomNumberGenerator Random { get { return s_instance._rand; } } 
+
     #endregion
 
     #region Core
     ResourceManager _resource = new ResourceManager();
-
     public static ResourceManager Resource {  get { return s_instance._resource; } }
     #endregion
 
@@ -21,7 +26,16 @@ public partial class Managers : Node
         {
             this.QueueFree(); // The Singletone is already loaded, kill this instance
         }
-        s_instance = this;
+        else
+        {
+            s_instance = this;
+            Init();
+        }
+    }
+
+    void Init()
+    {
+        _rand.Seed = (ulong)DateTime.Now.Ticks;
     }
 
     public override void _Process(double delta)
