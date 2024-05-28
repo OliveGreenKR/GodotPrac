@@ -12,6 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 public partial class DungeonBuilder : Node
 {
+    bool _dungeonComplete = false;
     public static Action DungeonCompleteAction = () => { };
 
     [Export]
@@ -53,13 +54,15 @@ public partial class DungeonBuilder : Node
         //generate Node2D each to 'Define.RoomTypes'
         Bind();
 
-        Task.Run(() => { GenerateDungeon(); });
+        await Task.Run(() => { GenerateDungeon(); });
         //todp :tilemap
 
         TileMap tilemap =  this.GetChildByType<TileMap>();
 
 
         //tilemap.SetCellsTerrainConnect(, terrainSet: 0, terrain: 0);
+        DungeonCompleteAction?.Invoke();
+        GD.Print($"{DungeonCompleteAction?.GetInvocationList().Length} invoked");
     }
 
     void Bind()
@@ -118,9 +121,6 @@ public partial class DungeonBuilder : Node
         }
 
         //todo :make edge to road.
-
-        //dugeon build finished
-        //DungeonCompleteAction.Invoke();
     }
 
     #region debug-visualization
@@ -186,7 +186,9 @@ public partial class DungeonBuilder : Node
         foreach (var room in groupRoom[true])
         {
             room.IsSelected = true;
+            //room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
         }
+
 
         return groupRoom[true];
     }

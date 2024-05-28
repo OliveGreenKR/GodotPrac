@@ -3,11 +3,12 @@ using System;
 
 public partial class Room : RigidBody2D
 {
-    public Action testAction;
-
     Define.RoomTypes _type;
     Vector2I _size;
 
+    static PackedScene _scene = ResourceLoader.Load<PackedScene>("Map/room.tscn");
+
+    [Export]
     public bool IsSelected { get; set; } = false;
 
     [Export]
@@ -33,8 +34,12 @@ public partial class Room : RigidBody2D
 
     public override void _PhysicsProcess(double delta)
     {
-        if (testAction != null)
-            testAction.Invoke();
+
+    }
+
+    static public Room InstantiateRoom(Define.RoomTypes type, Vector2I size)
+    {
+        Room room = Managers.Resource.Instantiate<Room>(_scene, null);
     }
 
     public void GenerateRoom()
@@ -63,6 +68,8 @@ public partial class Room : RigidBody2D
 
     public override void _Ready()
     {
+        _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
+
         DungeonBuilder.DungeonCompleteAction -= OnDungeonCompleted;
         DungeonBuilder.DungeonCompleteAction += OnDungeonCompleted;
     }
