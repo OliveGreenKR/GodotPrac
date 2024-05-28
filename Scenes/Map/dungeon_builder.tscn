@@ -1,22 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://cw7so2gky037v"]
 
-[ext_resource type="Script" path="res://Scripts/Contents/Map/DungeonBuilder.cs" id="1_il8nd"]
-[ext_resource type="TileSet" uid="uid://di14t8jp4oehk" path="res://Art/Tile/TileSet/TM_ground.tres" id="2_gifjf"]
+[ext_resource type="Script" path="res://Scripts/Contents/Map/DungeonCalculator.cs" id="1_nugh2"]
+[ext_resource type="PackedScene" uid="uid://1k37e6mj5gbo" path="res://Scenes/TileMap/dungeon_tile_map.tscn" id="2_nvj3q"]
 
 [node name="DungeonBuilder" type="Node2D"]
-script = ExtResource("1_il8nd")
-TileSize = 16
-GenerateRoomCount = 40
-MinMainRoomCount = 6
-MaxMainRoomCount = -1
-MaxRoomSize = 10
-MinRoomSize = 3
 
-[node name="TileMap" type="TileMap" parent="."]
-tile_set = ExtResource("2_gifjf")
-rendering_quadrant_size = 32
-format = 2
-layer_0/name = "BackGround"
-layer_0/navigation_enabled = false
-layer_1/name = "Ground"
-layer_1/tile_data = PackedInt32Array()
+[node name="DungeonCalculator" type="Node2D" parent="."]
+script = ExtResource("1_nugh2")
+
+[node name="DungeonTileMap" parent="." instance=ExtResource("2_nvj3q")]

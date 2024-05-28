@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://1k37e6mj5gbo"]
+
+[ext_resource type="TileSet" uid="uid://di14t8jp4oehk" path="res://Art/Tile/TileSet/TM_ground.tres" id="1_8eggu"]
+
+[node name="TileMap" type="TileMap"]
+tile_set = ExtResource("1_8eggu")
+rendering_quadrant_size = 32
+format = 2
+layer_0/name = "BackGround"
+layer_0/navigation_enabled = false
+layer_1/name = "Ground"
+layer_1/tile_data = PackedInt32Array()

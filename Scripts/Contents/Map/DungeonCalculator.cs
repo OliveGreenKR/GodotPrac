@@ -6,61 +6,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
-using MEC;
-using Define;
-using static System.Net.Mime.MediaTypeNames;
 
-public partial class DungeonBuilder : Node
+public partial class DungeonCalculator : Node
 {
-    bool _dungeonComplete = false;
-    public static Action DungeonCompleteAction = () => { };
+    public static Action DungeonCalculationCompleteAction = () => { };
 
     [Export]
-    public int TileSize { get; set; }
+    public int TileSize { get; set; } = 16;
     [Export]
-    public Godot.Vector2I DuegonSize { get; set; } = new Godot.Vector2I(200, 100);
+    public Godot.Vector2I DungeonSize { get; set; } = new Godot.Vector2I(200, 100);
     [Export]
-    public int GenerateRoomCount { get; set; }
+    public int GenerateRoomCount { get; set; } = 35;
     [Export]
-    public int MinMainRoomCount { get; set; }
+    public int MinMainRoomCount { get; set; } = 6;
     [Export]
-    public int MaxMainRoomCount { get; set; }
+    public int MaxMainRoomCount { get; set; } = 10;
     [Export]
-    public int MaxRoomSize { get; set; }
+    public int MaxRoomSize { get; set; } = 10;
     [Export]
-    public int MinRoomSize { get; set; }
+    public int MinRoomSize { get; set; } = 4;
 
     public ulong? Seed { get; private set; }
 
     //random gernerator
     RandomNumberGenerator _rand = new RandomNumberGenerator();
-
-    #region Tile &$ Deluaunry
-    TileMap _tileMap;
-
-    #endregion
     //room
-    
-    Godot.Collections.Dictionary<Define.RoomTypes, Node> _TypeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
+    Godot.Collections.Dictionary<Define.RoomTypes, Node> _typeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
 
     public override async void _Ready()
     {
         _rand.Seed = Seed ?? (ulong)DateTime.Now.Ticks;
-
-        _tileMap = this.GetChildByType<TileMap>();
-        _tileMap.RenderingQuadrantSize = TileSize;
-        //generate Node2D each to 'Define.RoomTypes'
         Bind();
 
         await Task.Run(() => { GenerateDungeon(); });
-        //todp :tilemap
-
-        TileMap tilemap =  this.GetChildByType<TileMap>();
-
-
-        //tilemap.SetCellsTerrainConnect(, terrainSet: 0, terrain: 0);
-        DungeonCompleteAction?.Invoke();
-        GD.Print($"{DungeonCompleteAction?.GetInvocationList().Length} invoked");
     }
 
     void Bind()
@@ -74,7 +52,7 @@ public partial class DungeonBuilder : Node
             var name = names[i];
             var child = this.GetorAddChildByName<Node>(name);
             child.Name = name;
-            _TypeRooms.Add((Define.RoomTypes)i, child);
+            _typeRooms.Add((Define.RoomTypes)i, child);
         }
     }
 
@@ -87,19 +65,20 @@ public partial class DungeonBuilder : Node
         //generating room
         for (int i = 0; i < GenerateRoomCount; i++)
         {
-            Godot.Vector2I pos = GetRandomPointInEllipse(DuegonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
+            Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
             var tmpRoom = GenerateRoomRandomSizedAt(pos);
             tmpRooms.Add(tmpRoom);
-            _TypeRooms[tmpRoom.RoomType].AddChild(tmpRoom, true);
+            _typeRooms[tmpRoom.RoomType].AddChild(tmpRoom, true);
         }
+
+        //wait for positioning Rooms
+        await this.WaitForSeconds(1f, processInPhysics: true);
+
         //select main rooms
         float standard = new Vector2I(MinRoomSize * TileSize, MaxRoomSize * TileSize).Length() * 1f;
 
         List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
         GD.Print($"selected  room count : {selectedRooms.Count}");
-        
-        //wait for positioning Rooms
-        await this.WaitForSeconds(1f, processInPhysics: true);
 
         //delaunary main Rooms
         DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
@@ -117,8 +96,8 @@ public partial class DungeonBuilder : Node
         {
             DrawEdges(edge, Colors.Green);
         }
-
         //todo :make edge to road.
+        DungeonCalculationCompleteAction.Invoke();
     }
 
     #region debug-visualization
@@ -184,9 +163,7 @@ public partial class DungeonBuilder : Node
         foreach (var room in groupRoom[true])
         {
             room.IsSelected = true;
-            //room.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
         }
-
 
         return groupRoom[true];
     }

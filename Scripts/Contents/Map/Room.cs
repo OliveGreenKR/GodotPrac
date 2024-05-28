@@ -5,6 +5,7 @@ public partial class Room : RigidBody2D, IGeneratableScene
 {
     Define.RoomTypes _type;
     Vector2I _size;
+    bool _isSelected = false;
 
     static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
     public static Room New(Vector2I size, Define.RoomTypes type = Define.RoomTypes.Basic)
@@ -12,10 +13,15 @@ public partial class Room : RigidBody2D, IGeneratableScene
         Room room = Managers.Resource.Instantiate<Room>(_scene, null);
         room.Size = size;
         room.RoomType = type;
+
+        //room.SetScript(ResourceLoader.Load("res://Scripts/Contents/Map/Room.cs"));
+        //room.Name = typeof(Room).Name;
+        //room.Size = size;
+        //room.RoomType = type;
+
         return room;
     }
 
-    [Export]
     public bool IsSelected { get; set; } = false;
 
     [Export]
@@ -68,20 +74,22 @@ public partial class Room : RigidBody2D, IGeneratableScene
 
     public override void _Ready()
     {
-        DungeonBuilder.DungeonCompleteAction -= OnDungeonCompleted;
-        DungeonBuilder.DungeonCompleteAction += OnDungeonCompleted;
+        DungeonCalculator.DungeonCalculationCompleteAction -= OnDungeonCompleted;
+        DungeonCalculator.DungeonCalculationCompleteAction += OnDungeonCompleted;
     }
 
     void OnDungeonCompleted()
     {
         if (IsSelected == false)
-            this.QueueFree();
+        {
+            QueueFree();
+            //GetTree().CreateTimer(0.3f).Timeout += () =>  { QueueFree(); };
+        }
         else
         {
             this.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
-            this.GetChildByType<RigidBody2D>().Freeze = true;
+            this.Freeze = true;
         }
-
     }
 
   
