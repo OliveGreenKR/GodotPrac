@@ -204,6 +204,20 @@ public static class Extension
 
 
     #region Vector
+
+    public static Vector2 GetDominantFactor(this Vector2 vector)
+    {
+        if(vector.Aspect() > 1f)
+        {
+            //left,right
+            return (vector.Dot(Vector2.Right) * Vector2.Right).Normalized();
+        }
+        else
+        {
+            return (vector.Dot(Vector2.Down) * Vector2.Down).Normalized();
+        }
+    }
+
     public static Vector2I ToVector2I(this Vector2 vector)
     {
         return new Vector2I((int)vector.X, (int)vector.Y);

@@ -177,8 +177,6 @@ public partial class DungeonCalculator : Node
         int y = Utils.RoundTileSize(size.Y * r * Mathf.Sin(theta));
         return new Godot.Vector2I(x, y);
     }
-
-
     #endregion
 
 }

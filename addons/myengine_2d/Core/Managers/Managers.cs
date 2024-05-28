@@ -18,6 +18,10 @@ public partial class Managers : Node
     #region Core
     ResourceManager _resource = new ResourceManager();
     public static ResourceManager Resource {  get { return s_instance._resource; } }
+
+    DebugManager _debug = new DebugManager();
+    public static DebugManager Debug {  get {  return s_instance._debug; } }
+    
     #endregion
 
     public override void _EnterTree()
@@ -36,6 +40,8 @@ public partial class Managers : Node
     void Init()
     {
         _rand.Seed = (ulong)DateTime.Now.Ticks;
+        _debug.Node.Name = "Debug";
+        AddChild(_debug.Node);
     }
 
     public override void _Process(double delta)

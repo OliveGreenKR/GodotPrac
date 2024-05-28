@@ -87,5 +87,11 @@ public partial class Room : RigidBody2D, IGeneratableScene
         }
     }
 
+    public void GenerateRandomDoor(Vector2 direction)
+    {
+        var dir = direction.GetDominantFactor();
+
+    }
+
   
 }
