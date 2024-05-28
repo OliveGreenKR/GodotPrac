@@ -78,7 +78,6 @@ public partial class Room : RigidBody2D, IGeneratableScene
         if (IsSelected == false)
         {
             QueueFree();
-            //GetTree().CreateTimer(0.3f).Timeout += () =>  { QueueFree(); };
         }
         else
         {

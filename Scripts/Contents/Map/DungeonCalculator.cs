@@ -85,11 +85,15 @@ public partial class DungeonCalculator : Node
         delaunator = new Delaunator(selectedPoints);
         var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
 
+
         foreach (IEdge edge in selectedEdge)
         {
             DrawEdges(edge, Colors.Green);
         }
         //todo :make edge to road.
+
+
+        //Invoke
         DungeonCalculationCompleteAction.Invoke();
     }
 
