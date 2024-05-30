@@ -11,11 +11,11 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
     static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
     static public PackedScene PackedScene => _scene;
 
-    static public Room GetNewInstance(Node parent = null) { return Managers.Resource.Instantiate<Room>(_scene, parent); }
+    static public Room New(Node parent = null) { return Managers.Resource.Instantiate<Room>(_scene, parent); }
 
     public static Room New(Vector2I size, Define.RoomTypes type = Define.RoomTypes.Basic)
     {
-        Room room = Room.GetNewInstance();
+        Room room = Room.New();
         room.Size = size;
         room.RoomType = type;
 
@@ -31,7 +31,6 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         set
         {
             _size = value;
-
             var rect = new RectangleShape2D();
             rect.Size = value;
             this.GetChildByType<CollisionShape2D>().Shape = rect;
@@ -95,15 +94,10 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         }
     }
 
+    /// <param name="direction"> relative  to Room's position </param>
     public void GenerateRandomDoor(Vector2 direction)
     {
-        //var ray = new RayCast2D();
-        //ray.CollisionMask = (uint)Define.Physics2D.DungeonRoom;
-        //ray.HitFromInside = false;
-        //ray.TargetPosition = GlobalPosition + direction;
-        //ray.AddException(this);
-        //this.AddChildDeferred(ray);
-        //GD.Print($"{ray.GetCollisionPoint()}");
+
     }
 
 

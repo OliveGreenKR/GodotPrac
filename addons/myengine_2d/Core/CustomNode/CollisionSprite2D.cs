@@ -10,7 +10,7 @@ public partial class CollisionSprite2D : CollisionShape2D, IPackedSceneNode<Coll
 	static PackedScene _scene = Managers.Resource.LoadPackedScene<CollisionSprite2D>(Define.Scenes.CoreNodes);
 	public static PackedScene PackedScene => _scene;
 
-	public static CollisionSprite2D GetNewInstance(Node parent = null) {  return Managers.Resource.Instantiate<CollisionSprite2D>(_scene, parent); }
+	public static CollisionSprite2D New(Node parent = null) {  return Managers.Resource.Instantiate<CollisionSprite2D>(_scene, parent); }
 
     [Export]
 	public Vector2 Size { get { return _size; } 
@@ -35,5 +35,8 @@ public partial class CollisionSprite2D : CollisionShape2D, IPackedSceneNode<Coll
 		_sprite =  this.GetOrAddChildByType<Sprite2D>();
 	}
 
+    public override void _PhysicsProcess(double delta)
+    {
+	}
 
 }

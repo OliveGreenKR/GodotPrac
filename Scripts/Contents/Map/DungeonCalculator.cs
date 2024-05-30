@@ -90,6 +90,7 @@ public partial class DungeonCalculator : Node
 
                 var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
                 roomP.GenerateRandomDoor(edge.ToVector2());
+                
             }
 
             //Invoke
@@ -120,7 +121,7 @@ public partial class DungeonCalculator : Node
         var size = new Vector2I(Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize),
                                  Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize));
         Room room = Room.New(size);
-        room.Position = position;
+        room.GlobalPosition = position;
         return room;
     }
 

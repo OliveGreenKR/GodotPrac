@@ -5,9 +5,9 @@ using System.Security.Cryptography;
 public partial class Door : Node2D, IPackedSceneNode<Door>
 {
 
-    static PackedScene _scene = Managers.Resource.LoadPackedScene<Door>(Define.Scenes.ContentNodes, "Map/room.tscn");
+    static PackedScene _scene = Managers.Resource.LoadPackedScene<Door>(Define.Scenes.ContentNodes, "Map/door.tscn");
     public static PackedScene PackedScene => _scene;
-    public static Door GetNewInstance(Node parent = null ) { return Managers.Resource.Instantiate<Door>(_scene, parent); }
+    public static Door New(Node parent = null ) { return Managers.Resource.Instantiate<Door>(_scene, parent); }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()

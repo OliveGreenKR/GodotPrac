@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 public interface IPackedSceneNode<T> where T : Node
 {
     static abstract PackedScene PackedScene { get; }
-    static abstract T GetNewInstance(Node parent = null); 
+    static abstract T New(Node parent = null); 
 }
