@@ -104,7 +104,6 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         //ray.AddException(this);
         //this.AddChildDeferred(ray);
         //GD.Print($"{ray.GetCollisionPoint()}");
-
     }
 
 
