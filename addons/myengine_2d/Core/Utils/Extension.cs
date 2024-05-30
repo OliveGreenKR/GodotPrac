@@ -59,6 +59,17 @@ public static class Extension
 
     #region Node
 
+    public static void DeferredAddChild( this Node node, Node child, bool ReadableName = false, Node.InternalMode @internal = Node.InternalMode.Disabled) 
+    {
+        Variant[] args = {child,  ReadableName, (int)@internal};
+        node.CallDeferred(Node.MethodName.AddChild, args);
+    }
+
+    public static void DeferredQueueFree(this Node node)
+    {
+        node.CallDeferred(Node.MethodName.QueueFree);
+    }
+
     public static SignalAwaiter WaitForSeconds(this Node node, double timeSec, bool processAlways = true, bool processInPhysics = false, bool ignoreTimeScale = false)
     {
         return node.ToSignal(node.GetTree().CreateTimer(timeSec, processAlways, processInPhysics, ignoreTimeScale), SceneTreeTimer.SignalName.Timeout);

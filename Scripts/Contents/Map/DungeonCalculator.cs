@@ -60,7 +60,7 @@ public partial class DungeonCalculator : Node
             Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize);
             var tmpRoom = GenerateRoomRandomSizedAt(pos);
             tmpRooms.Add(tmpRoom);
-            _typeRooms[tmpRoom.RoomType].CallDeferred(MethodName.AddChild, tmpRoom);
+            _typeRooms[tmpRoom.RoomType].DeferredAddChild(tmpRoom, true);
                 //AddChild(tmpRoom, true);
         }
 
