@@ -66,7 +66,7 @@ public class ResourceManager
         PackedScene scene =  Load<PackedScene>(path);
         var node = scene.Instantiate(); 
         if( parent != null)
-            parent.AddChild(node, @internal : mode);
+            parent.DeferredAddChild(node, @internal : mode);
         return node;
     }
 
@@ -85,7 +85,7 @@ public class ResourceManager
     {
         var node = scene.Instantiate();
         if (parent != null)
-            parent.AddChild(node, @internal: mode);
+            parent.DeferredAddChild(node, @internal: mode);
         return node;
     }
 

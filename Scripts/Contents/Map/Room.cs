@@ -3,6 +3,7 @@ using System;
 
 public partial class Room : RigidBody2D, IGeneratableScene
 {
+
     Define.RoomTypes _type;
     Vector2I _size;
     bool _isSelected = false;
@@ -45,25 +46,7 @@ public partial class Room : RigidBody2D, IGeneratableScene
         set
         {
             _type = value;
-
-            switch (value)
-            {
-                case Define.RoomTypes.Basic:
-                    {
-                        GD.Print("Basic Romm Genrated");
-                    }
-                    break;
-                case Define.RoomTypes.A:
-                    {
-                        GD.Print("A Romm Genrated");
-                    }
-                    break;
-                case Define.RoomTypes.B:
-                    {
-                        GD.Print("B Romm Genrated");
-                    }
-                    break;
-            }
+            GeneratingWithRoomTypes();
             return;
         }
     }
@@ -90,12 +73,35 @@ public partial class Room : RigidBody2D, IGeneratableScene
         {
             this.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
             this.Freeze = true;
+            GeneratingWithRoomTypes();
         }
 
 
     }
 
-    void GeneratingRoomType
+    void GeneratingWithRoomTypes()
+    {
+        if (IsSelected == false) return;
+
+        switch (_type)
+        {
+            case Define.RoomTypes.Basic:
+                {
+                    GD.Print("Basic Romm Genrated");
+                }
+                break;
+            case Define.RoomTypes.A:
+                {
+                    GD.Print("A Romm Genrated");
+                }
+                break;
+            case Define.RoomTypes.B:
+                {
+                    GD.Print("B Romm Genrated");
+                }
+                break;
+        }
+    }
 
     public void GenerateRandomDoor(Vector2 direction)
     {

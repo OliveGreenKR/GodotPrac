@@ -4,7 +4,7 @@ using System;
 public partial class Managers : Node
 {
     static Managers s_instance;
-    static Managers Instance { get { return s_instance; } }
+    public static Managers Instance { get { return s_instance; } }
 
     #region Contents
     TileManager _tile = new TileManager();
@@ -41,7 +41,9 @@ public partial class Managers : Node
     {
         _rand.Seed = (ulong)DateTime.Now.Ticks;
         _debug.Node.Name = "Debug";
-        AddChild(_debug.Node);
+        this.DeferredAddChild(_debug.Node);
+
+        _tile.Init();
     }
 
     public override void _Process(double delta)
