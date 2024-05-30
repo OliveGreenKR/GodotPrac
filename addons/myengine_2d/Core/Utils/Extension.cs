@@ -59,13 +59,13 @@ public static class Extension
 
     #region Node
 
-    public static void DeferredAddChild( this Node node, Node child, bool ReadableName = false, Node.InternalMode @internal = Node.InternalMode.Disabled) 
+    public static void AddChildDeferred( this Node node, Node child, bool ReadableName = false, Node.InternalMode @internal = Node.InternalMode.Disabled) 
     {
         Variant[] args = {child,  ReadableName, (int)@internal};
         node.CallDeferred(Node.MethodName.AddChild, args);
     }
 
-    public static void DeferredQueueFree(this Node node)
+    public static void QueueFreeDeferred(this Node node)
     {
         node.CallDeferred(Node.MethodName.QueueFree);
     }

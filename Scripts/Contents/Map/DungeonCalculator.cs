@@ -58,7 +58,7 @@ public partial class DungeonCalculator : Node
             Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize);
             var tmpRoom = GenerateRoomRandomSizedAt(pos);
             tmpRooms.Add(tmpRoom);
-            _typeRooms[tmpRoom.RoomType].DeferredAddChild(tmpRoom, true);
+            _typeRooms[tmpRoom.RoomType].AddChildDeferred(tmpRoom, true);
         }
 
         //wait for positioning Rooms
@@ -89,17 +89,9 @@ public partial class DungeonCalculator : Node
                 DrawEdges(edge, Colors.Green);
 
                 var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
-                roomP.GenerateRandomDoor(edge.GetVector());
-
-                //var ray = new RayCast2D();
-                //ray.CollisionMask = (uint)Define.Physics2D.DungeonRoom;
-                //ray.GlobalPosition = roomP.GlobalPosition;
-                //ray.HitFromInside = false;
-                //ray.TargetPosition = edge.Q.ToVector2();
-                //ray.ForceRaycastUpdate();
-                //ray.GetCollisionPoint();
+                roomP.GenerateRandomDoor(edge.ToVector2());
             }
-            
+
             //Invoke
             DungeonCalculationCompleteAction.Invoke();
         });

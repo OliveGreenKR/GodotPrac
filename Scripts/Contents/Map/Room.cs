@@ -1,3 +1,4 @@
+using DelaunatorSharp;
 using Godot;
 using System;
 
@@ -68,7 +69,6 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
             GeneratingWithRoomTypes();
         }
 
-
     }
 
     void GeneratingWithRoomTypes()
@@ -97,9 +97,15 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
 
     public void GenerateRandomDoor(Vector2 direction)
     {
-        //todo: choice a edge direction
-        // get random coordinate  in the edge for 'door' 
+        //var ray = new RayCast2D();
+        //ray.CollisionMask = (uint)Define.Physics2D.DungeonRoom;
+        //ray.HitFromInside = false;
+        //ray.TargetPosition = GlobalPosition + direction;
+        //ray.AddException(this);
+        //this.AddChildDeferred(ray);
+        //GD.Print($"{ray.GetCollisionPoint()}");
+
     }
 
- 
+
 }

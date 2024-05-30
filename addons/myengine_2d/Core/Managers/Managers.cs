@@ -41,7 +41,7 @@ public partial class Managers : Node
     {
         _rand.Seed = (ulong)DateTime.Now.Ticks;
         _debug.Node.Name = "Debug";
-        this.DeferredAddChild(_debug.Node);
+        this.AddChildDeferred(_debug.Node);
 
         _tile.Init();
     }
