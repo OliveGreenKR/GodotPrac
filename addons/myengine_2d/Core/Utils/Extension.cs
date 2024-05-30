@@ -105,7 +105,7 @@ public static class Extension
         if (child != null)
             return child;
 
-        PackedScene scn = Managers.Resource.LoadPackedScene<T>(Define.Scenes.Nodes);
+        PackedScene scn = Managers.Resource.LoadPackedScene<T>(Define.Scenes.ContentNodes);
         if(scn != null)
         child = Managers.Resource.Instantiate<T> (scn, parent);
         return child;

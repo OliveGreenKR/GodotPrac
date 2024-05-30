@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://qs2lc3pvttyg"]
+
+[ext_resource type="Script" path="res://Scripts/Contents/Map/Door.cs" id="1_1n4kd"]
+[ext_resource type="PackedScene" uid="uid://b263trsr8f7k1" path="res://addons/myengine_2d/Core/CustomNode/collision_sprite_2d.tscn" id="1_wt0a0"]
+
+[node name="Door" type="Node2D"]
+script = ExtResource("1_1n4kd")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+gravity_scale = 0.0
+lock_rotation = true
+freeze = true
+freeze_mode = 1
+
+[node name="CollisionSprite2D" parent="RigidBody2D" instance=ExtResource("1_wt0a0")]
+Size = Vector2(16, 16)

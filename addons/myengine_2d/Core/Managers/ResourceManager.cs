@@ -23,7 +23,12 @@ public class ResourceManager
 
         switch (type)
         {
-            case Define.Scenes.Nodes:
+            case Define.Scenes.CoreNodes:
+                {
+                    absPath = "res://addons/myengine_2d/Core/CustomNode/" + path;
+                }
+                break;
+            case Define.Scenes.ContentNodes:
                 {
                     absPath = "res://Scenes/" + path;
                 }

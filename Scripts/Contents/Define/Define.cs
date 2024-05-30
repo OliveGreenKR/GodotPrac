@@ -8,7 +8,8 @@ namespace Define;
 
 public enum Scenes
 {
-    Nodes,
+    CoreNodes,
+    ContentNodes,
     GameScenes,
 }
 

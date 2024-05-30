@@ -31,6 +31,7 @@ public partial class DungeonCalculator : Node
     {
         Bind();
         await Task.Run(() => { GenerateDungeon(); });
+        GD.Print("sdsfsdf");
     }
 
     void Bind()
@@ -50,8 +51,6 @@ public partial class DungeonCalculator : Node
 
     public void GenerateDungeon()
     {
-        //await this.WaitForSeconds(GetPhysicsProcessDeltaTime() ,processInPhysics:true);
-
         List<Room> tmpRooms = new List<Room>();
         Delaunator delaunator;
         //generating room
@@ -61,18 +60,17 @@ public partial class DungeonCalculator : Node
             var tmpRoom = GenerateRoomRandomSizedAt(pos);
             tmpRooms.Add(tmpRoom);
             _typeRooms[tmpRoom.RoomType].DeferredAddChild(tmpRoom, true);
-                //AddChild(tmpRoom, true);
         }
 
         //wait for positioning Rooms
-        //await this.WaitForSeconds(1f, processInPhysics: true);
-
-        this.WaitForSeconds(1f, processInPhysics: true).OnCompleted(() =>
+        
+        this.WaitForSeconds(GetProcessDeltaTime()*10, processInPhysics: true).OnCompleted(() =>
         {
             //select main rooms
             float standard = new Vector2I(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize).Length() * 1f;
 
             List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
+            GD.Print($"selection Room Count : {selectedRooms.Count}");
 
             //delaunary main Rooms
             DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
@@ -92,7 +90,6 @@ public partial class DungeonCalculator : Node
                 DrawEdges(edge, Colors.Green);
             }
             //todo :make edge to road.
-
 
             //Invoke
             DungeonCalculationCompleteAction.Invoke();

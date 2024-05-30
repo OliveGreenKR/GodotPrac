@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://b263trsr8f7k1"]
+
+[ext_resource type="Script" path="res://addons/myengine_2d/Core/CustomNode/CollisionSprite2D.cs" id="1_dfm0q"]
+[ext_resource type="Texture2D" uid="uid://mw18mfmvt6hm" path="res://icon.svg" id="2_c02k2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_thv4g"]
+
+[node name="CollisionSprite2D" type="CollisionShape2D"]
+shape = SubResource("RectangleShape2D_thv4g")
+debug_color = Color(0.970118, 0, 0.456859, 0.42)
+script = ExtResource("1_dfm0q")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_c02k2")

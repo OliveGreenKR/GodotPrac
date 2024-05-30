@@ -30,7 +30,7 @@ public class DebugManager
         material.ShadingMode = StandardMaterial3D.ShadingModeEnum.Unshaded;
         material.AlbedoColor = color ?? _defaultColor;
 
-        _node.AddChild(meshInstance);
+        _node.DeferredAddChild(meshInstance);
 
         return meshInstance;
     }
@@ -55,7 +55,7 @@ public class DebugManager
         material.ShadingMode = StandardMaterial3D.ShadingModeEnum.Unshaded;
         material.AlbedoColor = color ?? _defaultColor;
 
-        _node.AddChild(meshInstance);
+        _node.DeferredAddChild(meshInstance);
 
         return meshInstance;
     }
@@ -74,7 +74,7 @@ public class DebugManager
             drawer.DefaultColor = (Godot.Color)color;
         drawer.AddPoint(from);
         drawer.AddPoint(to);
-        _node.AddChild(drawer);
+        _node.DeferredAddChild(drawer);
 
         return drawer;
     }

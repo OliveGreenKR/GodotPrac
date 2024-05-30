@@ -7,13 +7,13 @@ public partial class Room : RigidBody2D, IGeneratableScene
     Vector2I _size;
     bool _isSelected = false;
 
-    static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
+    static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
 
     public static Room New(Vector2I size, Define.RoomTypes type = Define.RoomTypes.Basic)
     {
         if(_scene == null)
         {
-            _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
+            _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
         }
 
         Room room = Managers.Resource.Instantiate<Room>(_scene, null);
@@ -81,6 +81,7 @@ public partial class Room : RigidBody2D, IGeneratableScene
 
     void OnDungeonCompleted()
     {
+        //try genrating room  arrording to with each types.
         if (IsSelected == false)
         {
             QueueFree();
@@ -90,7 +91,11 @@ public partial class Room : RigidBody2D, IGeneratableScene
             this.GetChildByType<CollisionShape2D>().DebugColor = Color.FromHtml("db56576b");
             this.Freeze = true;
         }
+
+
     }
+
+    void GeneratingRoomType
 
     public void GenerateRandomDoor(Vector2 direction)
     {
