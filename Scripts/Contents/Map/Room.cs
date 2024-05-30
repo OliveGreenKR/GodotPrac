@@ -105,8 +105,6 @@ public partial class Room : RigidBody2D, IGeneratableScene
 
     public void GenerateRandomDoor(Vector2 direction)
     {
-        var dir = direction.GetDominantFactor();
-        Managers.Debug.DrawLine2D(GlobalPosition, GlobalPosition + dir*10, color : Colors.BlueViolet);
         //todo: choice a edge direction
         // get random coordinate  in the edge for 'door' 
     }

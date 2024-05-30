@@ -92,8 +92,13 @@ public partial class DungeonCalculator : Node
                 var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
                 roomP.GenerateRandomDoor(edge.GetVector());
 
-                var ray = new RayCast2D();
-                ray.CollisionMask = roomP.GetCollisionLayerValue();
+                //var ray = new RayCast2D();
+                //ray.CollisionMask = (uint)Define.Physics2D.DungeonRoom;
+                //ray.GlobalPosition = roomP.GlobalPosition;
+                //ray.HitFromInside = false;
+                //ray.TargetPosition = edge.Q.ToVector2();
+                //ray.ForceRaycastUpdate();
+                //ray.GetCollisionPoint();
             }
             
             //Invoke
