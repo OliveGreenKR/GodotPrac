@@ -1,15 +1,18 @@
 using Godot;
 using System;
 
-public partial class CollisionSprite2D : CollisionShape2D, IGeneratableScene
+public partial class CollisionSprite2D : CollisionShape2D, IPackedSceneNode<CollisionSprite2D>
 {
 	Vector2 _size = new Vector2();
 
 	Sprite2D _sprite = null;
 
 	static PackedScene _scene = Managers.Resource.LoadPackedScene<CollisionSprite2D>(Define.Scenes.CoreNodes);
+	public static PackedScene PackedScene => _scene;
 
-	[Export]
+	public static CollisionSprite2D GetNewInstance(Node parent = null) {  return Managers.Resource.Instantiate<CollisionSprite2D>(_scene, parent); }
+
+    [Export]
 	public Vector2 Size { get { return _size; } 
 		set 
 		{
@@ -25,9 +28,12 @@ public partial class CollisionSprite2D : CollisionShape2D, IGeneratableScene
 			_sprite.Scale = ratio;
 
         } }
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
 		_sprite =  this.GetOrAddChildByType<Sprite2D>();
 	}
+
+
 }

@@ -31,7 +31,6 @@ public partial class DungeonCalculator : Node
     {
         Bind();
         await Task.Run(() => { GenerateDungeon(); });
-        GD.Print("sdsfsdf");
     }
 
     void Bind()

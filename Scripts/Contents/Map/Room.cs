@@ -1,23 +1,20 @@
 using Godot;
 using System;
 
-public partial class Room : RigidBody2D, IGeneratableScene
+public partial class Room : RigidBody2D, IPackedSceneNode<Room>
 {
-
     Define.RoomTypes _type;
     Vector2I _size;
     bool _isSelected = false;
 
     static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
+    static public PackedScene PackedScene => _scene;
+
+    static public Room GetNewInstance(Node parent = null) { return Managers.Resource.Instantiate<Room>(_scene, parent); }
 
     public static Room New(Vector2I size, Define.RoomTypes type = Define.RoomTypes.Basic)
     {
-        if(_scene == null)
-        {
-            _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
-        }
-
-        Room room = Managers.Resource.Instantiate<Room>(_scene, null);
+        Room room = Room.GetNewInstance();
         room.Size = size;
         room.RoomType = type;
 
@@ -49,11 +46,6 @@ public partial class Room : RigidBody2D, IGeneratableScene
             GeneratingWithRoomTypes();
             return;
         }
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-
     }
 
     public override void _Ready()
@@ -109,5 +101,5 @@ public partial class Room : RigidBody2D, IGeneratableScene
         // get random coordinate  in the edge for 'door' 
     }
 
-  
+ 
 }
