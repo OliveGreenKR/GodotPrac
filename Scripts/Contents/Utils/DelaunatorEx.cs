@@ -31,6 +31,11 @@ public static class DelaunatorEx
         static public implicit operator Vector2(GridPoint gp) { return new Vector2 { X = (float)gp.X, Y = (float)gp.Y }; }
     }
 
+    public static Vector2 GetVector(this IEdge edge)
+    {
+        return edge.Q.ToVector2() - edge.P.ToVector2();
+    }
+
     /// <summary>
     /// Making a MST based on Edge Length.and return selected Edge
     /// </summary>

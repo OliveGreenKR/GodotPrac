@@ -206,7 +206,9 @@ public static class Extension
 
 
     #region Vector
-
+    /// <summary>
+    ///  return normalized dominant factor
+    /// </summary>
     public static Vector2 GetDominantFactor(this Vector2 vector)
     {
         if(vector.Aspect() > 1f)

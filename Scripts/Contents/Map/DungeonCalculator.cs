@@ -84,13 +84,18 @@ public partial class DungeonCalculator : Node
             delaunator = new Delaunator(selectedPoints);
             var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
 
-
+            //test :make edge to road.
             foreach (IEdge edge in selectedEdge)
             {
                 DrawEdges(edge, Colors.Green);
-            }
-            //todo :make edge to road.
 
+                var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
+                roomP.GenerateRandomDoor(edge.GetVector());
+
+                var ray = new RayCast2D();
+                ray.CollisionMask = roomP.GetCollisionLayerValue();
+            }
+            
             //Invoke
             DungeonCalculationCompleteAction.Invoke();
         });

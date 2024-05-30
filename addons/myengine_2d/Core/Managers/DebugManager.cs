@@ -35,7 +35,7 @@ public class DebugManager
         return meshInstance;
     }
 
-    public MeshInstance3D DrawPoint3D(Vector3 pos, float radius = 0.05f, Color? color = null)
+    public MeshInstance3D DrawPoint3D(Vector3 pos, Color? color = null , float radius = 0.05f )
     {
         if (EngineDebugger.IsActive() == false)
             return null;
@@ -60,7 +60,7 @@ public class DebugManager
         return meshInstance;
     }
 
-    public Line2D DrawLine2D( Vector2 from, Vector2 to, float width = 2.0f , Color? color = null)
+    public Line2D DrawLine2D( Vector2 from, Vector2 to, Color? color = null, float width = 2.0f )
     {
         if (EngineDebugger.IsActive() == false)
             return null;
