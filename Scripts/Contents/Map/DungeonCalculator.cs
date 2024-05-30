@@ -30,7 +30,6 @@ public partial class DungeonCalculator : Node
     public override async void _Ready()
     {
         Bind();
-
         await Task.Run(() => { GenerateDungeon(); });
     }
 
@@ -49,52 +48,55 @@ public partial class DungeonCalculator : Node
         }
     }
 
-    public async void GenerateDungeon()
+    public void GenerateDungeon()
     {
-        await this.WaitForSeconds(GetPhysicsProcessDeltaTime(),processInPhysics:true);
+        //await this.WaitForSeconds(GetPhysicsProcessDeltaTime() ,processInPhysics:true);
 
         List<Room> tmpRooms = new List<Room>();
         Delaunator delaunator;
         //generating room
         for (int i = 0; i < GenerateRoomCount; i++)
         {
-            Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize) + GetViewport().GetVisibleRect().Size.ToVector2I() / 2;
+            Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize);
             var tmpRoom = GenerateRoomRandomSizedAt(pos);
             tmpRooms.Add(tmpRoom);
-            _typeRooms[tmpRoom.RoomType].AddChild(tmpRoom, true);
+            _typeRooms[tmpRoom.RoomType].CallDeferred(MethodName.AddChild, tmpRoom);
+                //AddChild(tmpRoom, true);
         }
 
         //wait for positioning Rooms
-        await this.WaitForSeconds(1f, processInPhysics: true);
+        //await this.WaitForSeconds(1f, processInPhysics: true);
 
-        //select main rooms
-        float standard = new Vector2I(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize).Length() * 1f;
-
-        List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
-        GD.Print($"selected  room count : {selectedRooms.Count}");
-
-        //delaunary main Rooms
-        DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
-        { 
-            var tmp = new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i };
-            tmp.Parent = tmp;
-            return tmp;
-        }
-        ).ToArray();
-
-        delaunator = new Delaunator(selectedPoints);
-        var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
-
-
-        foreach (IEdge edge in selectedEdge)
+        this.WaitForSeconds(1f, processInPhysics: true).OnCompleted(() =>
         {
-            DrawEdges(edge, Colors.Green);
-        }
-        //todo :make edge to road.
+            //select main rooms
+            float standard = new Vector2I(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize).Length() * 1f;
+
+            List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
+
+            //delaunary main Rooms
+            DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
+            {
+                var tmp = new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i };
+                tmp.Parent = tmp;
+                return tmp;
+            }
+            ).ToArray();
+
+            delaunator = new Delaunator(selectedPoints);
+            var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
 
 
-        //Invoke
-        DungeonCalculationCompleteAction.Invoke();
+            foreach (IEdge edge in selectedEdge)
+            {
+                DrawEdges(edge, Colors.Green);
+            }
+            //todo :make edge to road.
+
+
+            //Invoke
+            DungeonCalculationCompleteAction.Invoke();
+        });
     }
 
     #region debug-visualization

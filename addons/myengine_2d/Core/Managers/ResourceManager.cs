@@ -10,31 +10,31 @@ public class ResourceManager
     /// <summary>
     /// Load C# class to PackedScnene  via class Name.
     /// </summary>
-    public PackedScene LoadPackedScene<T>(Define.Scenes type,string name =null, ResourceLoader.CacheMode mode = ResourceLoader.CacheMode.Reuse) where T : GodotObject
+    public PackedScene LoadPackedScene<T>(Define.Scenes type,string path =null, ResourceLoader.CacheMode mode = ResourceLoader.CacheMode.Reuse) where T : GodotObject
     {
-        if(name == null)
+        if(path == null)
         {
-            name = typeof(T).Name.ToSnakeCase();
+            path = typeof(T).Name.ToSnakeCase();
         }
 
-        string path = "";
-        if (name.LastIndexOf(".tscn") < 0)
-            name += ".tscn";
+        string absPath = "";
+        if (path.LastIndexOf(".tscn") < 0)
+            path += ".tscn";
 
         switch (type)
         {
             case Define.Scenes.Nodes:
                 {
-                    path = "res://Scenes/" + name;
+                    absPath = "res://Scenes/" + path;
                 }
                 break;
             case Define.Scenes.GameScenes:
                 {
-                    path = "res://Scenes/GameScene/" + name;
+                    absPath = "res://Scenes/GameScene/" + path;
                 }
                 break;
         }
-        return Load<PackedScene>(path, mode);
+        return Load<PackedScene>(absPath, mode);
     }
 
     /// <summary>

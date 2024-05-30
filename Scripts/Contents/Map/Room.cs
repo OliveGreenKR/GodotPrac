@@ -8,8 +8,14 @@ public partial class Room : RigidBody2D, IGeneratableScene
     bool _isSelected = false;
 
     static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
+
     public static Room New(Vector2I size, Define.RoomTypes type = Define.RoomTypes.Basic)
     {
+        if(_scene == null)
+        {
+            _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.Nodes, "Map/room.tscn");
+        }
+
         Room room = Managers.Resource.Instantiate<Room>(_scene, null);
         room.Size = size;
         room.RoomType = type;
@@ -89,7 +95,8 @@ public partial class Room : RigidBody2D, IGeneratableScene
     public void GenerateRandomDoor(Vector2 direction)
     {
         var dir = direction.GetDominantFactor();
-
+        //todo: choice a edge direction
+        // get random coordinate  in the edge for 'door' 
     }
 
   

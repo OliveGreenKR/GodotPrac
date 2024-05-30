@@ -55,15 +55,6 @@ public static class Extension
             && GodotObject.IsInstanceValid(obj);
         }
     }
-
-
-    /// <summary>
-    /// return NULL, if object is not valid.
-    /// </summary>
-    public static T IfValid<T>(this T obj) where T : GodotObject
-    {
-        return obj.IsValid() ? obj : null;
-    }
     #endregion
 
     #region Node

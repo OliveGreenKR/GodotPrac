@@ -10,4 +10,4 @@ script = ExtResource("1_nugh2")
 
 [node name="DungeonTileMap" parent="." instance=ExtResource("2_nvj3q")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Camera2D" type="Camera2D" parent="."]
