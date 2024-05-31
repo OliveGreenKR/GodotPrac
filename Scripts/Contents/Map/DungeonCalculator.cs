@@ -25,12 +25,15 @@ public partial class DungeonCalculator : Node
     public int MinRoomSize { get; set; } = 4;
 
     //room
-    Godot.Collections.Dictionary<Define.RoomTypes, Node> _typeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
+    //Godot.Collections.Dictionary<Define.RoomTypes, Node> _typeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
+    List<Room> _rooms = new List<Room>();
 
-    public override async void _Ready()
+    int _arrangedRoomCount = 0;
+
+    public override void _Ready()
     {
-        Bind();
-        await Task.Run(() => { GenerateDungeon(); });
+        //Bind();
+        GenerateRooms();
     }
 
     void Bind()
@@ -44,58 +47,64 @@ public partial class DungeonCalculator : Node
             var name = names[i];
             var child = this.GetorAddChildByName<Node>(name);
             child.Name = name;
-            _typeRooms.Add((Define.RoomTypes)i, child);
+            //_typeRooms.Add((Define.RoomTypes)i, child);
         }
     }
 
-    public void GenerateDungeon()
+    public void GenerateRooms()
     {
-        List<Room> tmpRooms = new List<Room>();
-        Delaunator delaunator;
         //generating room
         for (int i = 0; i < GenerateRoomCount; i++)
         {
             Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize);
-            var tmpRoom = GenerateRoomRandomSizedAt(pos);
-            tmpRooms.Add(tmpRoom);
-            _typeRooms[tmpRoom.RoomType].AddChildDeferred(tmpRoom, true);
+            var room = GenerateRoomRandomSizedAt(pos);
+            _rooms.Add(room);
+            room.RoomArrangementCompleteAction += OnRoomArragementCompleted;
+        }
+    }
+
+    void CalculatingGraph()
+    {
+        Delaunator delaunator;
+
+        //select main rooms
+        float standard = new Vector2I(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize).Length() * 1f;
+
+        List<Room> selectedRooms = SelectMainRooms(_rooms, standard);
+        GD.Print($"selection Room Count : {selectedRooms.Count}");
+
+        //delaunary main Rooms
+        DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
+        {
+            var tmp = new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i };
+            tmp.Parent = tmp; //for Kruskal, make DisjointSet
+            return tmp;
+        }
+        ).ToArray();
+
+        delaunator = new Delaunator(selectedPoints);
+        var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
+
+        //test :make edge to road.
+        foreach (IEdge edge in selectedEdge)
+        {
+            DrawEdges(edge, Colors.Green);
+
+            //var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
+            //roomP.GenerateRandomDoor(edge.ToVector2());
+
         }
 
-        //wait for positioning Rooms
-        
-        this.WaitForSeconds(GetProcessDeltaTime()*10, processInPhysics: true).OnCompleted(() =>
+        //Invoke
+        DungeonCalculationCompleteAction.Invoke();
+    }
+    void OnRoomArragementCompleted()
+    {
+        if (++_arrangedRoomCount == GenerateRoomCount)
         {
-            //select main rooms
-            float standard = new Vector2I(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize).Length() * 1f;
-
-            List<Room> selectedRooms = SelectMainRooms(tmpRooms, standard);
-            GD.Print($"selection Room Count : {selectedRooms.Count}");
-
-            //delaunary main Rooms
-            DelaunatorEx.GridPoint[] selectedPoints = selectedRooms.Select((room, i) =>
-            {
-                var tmp = new DelaunatorEx.GridPoint { Vector = room.GlobalPosition.ToVector2I(), Index = i };
-                tmp.Parent = tmp;
-                return tmp;
-            }
-            ).ToArray();
-
-            delaunator = new Delaunator(selectedPoints);
-            var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
-
-            //test :make edge to road.
-            foreach (IEdge edge in selectedEdge)
-            {
-                DrawEdges(edge, Colors.Green);
-
-                var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
-                roomP.GenerateRandomDoor(edge.ToVector2());
-                
-            }
-
-            //Invoke
-            DungeonCalculationCompleteAction.Invoke();
-        });
+            CalculatingGraph();
+            GD.Print("Calculation!");
+        }
     }
 
     #region debug-visualization
@@ -120,8 +129,9 @@ public partial class DungeonCalculator : Node
     {
         var size = new Vector2I(Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize),
                                  Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize));
-        Room room = Room.New(size);
+        Room room = Room.New(this);
         room.GlobalPosition = position;
+        room.Size = size;
         return room;
     }
 

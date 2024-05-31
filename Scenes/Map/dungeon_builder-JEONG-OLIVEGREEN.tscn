@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://cw7so2gky037v"]
+
+[ext_resource type="Script" path="res://Scripts/Contents/Map/DungeonBuilder.cs" id="1_il8nd"]
+[ext_resource type="TileSet" uid="uid://di14t8jp4oehk" path="res://Art/Tile/TileSet/TM_ground.tres" id="2_gifjf"]
+[ext_resource type="Script" path="res://Scripts/Contents/Map/Room.cs" id="3_ton2j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_weesl"]
+size = Vector2(10, 10)
+
+[node name="DungeonBuilder" type="Node2D"]
+script = ExtResource("1_il8nd")
+TileSize = 16
+GenerateRoomCount = 40
+MinMainRoomCount = 6
+MaxMainRoomCount = -1
+MaxRoomSize = 10
+MinRoomSize = 3
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource("2_gifjf")
+rendering_quadrant_size = 32
+format = 2
+layer_0/name = "BackGround"
+layer_0/navigation_enabled = false
+layer_1/name = "Ground"
+layer_1/tile_data = PackedInt32Array()
+
+[node name="Room" type="RigidBody2D" parent="."]
+collision_layer = 16
+collision_mask = 16
+gravity_scale = 0.0
+lock_rotation = true
+angular_damp = 7.372
+script = ExtResource("3_ton2j")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Room"]
+shape = SubResource("RectangleShape2D_weesl")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)

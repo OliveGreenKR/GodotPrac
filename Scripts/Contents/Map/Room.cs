@@ -4,9 +4,13 @@ using System;
 
 public partial class Room : RigidBody2D, IPackedSceneNode<Room>
 {
+    public Action RoomArrangementCompleteAction = () => { };
+
     Define.RoomTypes _type;
     Vector2I _size;
     bool _isSelected = false;
+
+    Vector2 _position;
 
     static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
     static public PackedScene PackedScene => _scene;
@@ -70,6 +74,16 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
 
     }
 
+    public override void _PhysicsProcess(double delta)
+    {
+        if( _position != GlobalPosition )
+            _position = GlobalPosition;
+        else
+        {
+            RoomArrangementCompleteAction?.Invoke();
+        }
+    }
+
     void GeneratingWithRoomTypes()
     {
         if (IsSelected == false) return;
@@ -100,5 +114,6 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
 
     }
 
+  
 
 }

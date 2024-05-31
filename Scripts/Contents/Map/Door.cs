@@ -20,6 +20,4 @@ public partial class Door : Node2D, IPackedSceneNode<Door>
 	public override void _Process(double delta)
 	{
 	}
-
-    
 }

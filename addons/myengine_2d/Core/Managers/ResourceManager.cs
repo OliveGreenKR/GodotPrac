@@ -85,7 +85,7 @@ public class ResourceManager
     {
         var node = scene.Instantiate();
         if (parent != null)
-            parent.AddChildDeferred(node, @internal: mode);
+            parent.AddChildDeferred(node,ReadableName : true, @internal: mode);
         return node;
     }
 
