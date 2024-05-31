@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://di14t8jp4oehk" path="res://Art/Tile/TileSet/TM_ground.tres" id="1_8eggu"]
 
-[node name="TileMap" type="TileMap"]
+[node name="DungeonTM" type="TileMap"]
 tile_set = ExtResource("1_8eggu")
 rendering_quadrant_size = 32
 format = 2

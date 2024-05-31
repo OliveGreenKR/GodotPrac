@@ -205,7 +205,6 @@ public static class Extension
     }
     #endregion
 
-
     #region Vector
 
     public static Vector2I RoundInt(this Vector2 vector, int size)
@@ -260,7 +259,7 @@ public static class Extension
     //    // Calculate the intersection point of the line with the rectangle
     //    // This implementation assumes a simple line-rectangle intersection algorithm
     //    // You may need to modify this implementation based on your specific requirements
-        
+
     //    Vector2 center = collision.GlobalPosition;
 
     //    switch(shapeType)
@@ -271,7 +270,7 @@ public static class Extension
     //        } break;
     //        case CollisionShape.Rect:
     //        {
-                
+
     //        }break;
     //        case CollisionShape.Capsule:
     //        {
@@ -280,11 +279,22 @@ public static class Extension
     //    }
     //    RectangleShape2D shape = collision.Shape as RectangleShape2D;
 
-        
+
 
     //    return new Vector2 { };
     //}
 
 
+    #endregion
+
+    #region RandomNumberGenerator
+
+    public static Vector2 RandVector(this RandomNumberGenerator rand, Vector2 min, Vector2 max)
+    {
+        var dx = Mathf.Abs(max.X - min.X);
+        var dy = Mathf.Abs(max.Y - min.Y);
+
+        return new Vector2(rand.Randf() * dx + min.X, rand.Randf() * dy + min.Y);
+    }
     #endregion
 }

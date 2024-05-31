@@ -3,9 +3,8 @@ using System;
 
 public class TileManager
 {
-    int _tileSize = 16;
-    public int TileSize { get { return _tileSize; } }
-    public Vector2I TileSizeVector { get { return new Vector2I(_tileSize, _tileSize); } }
+    public int TileSize { get; private set; }
+    public Vector2I TileSizeVector { get; private set; }
     public TileMap DungeonTM;
 
 
@@ -15,6 +14,10 @@ public class TileManager
         Managers.Resource.Instantiate<TileMap>(
         Managers.Resource.LoadPackedScene<TileMap>(Define.Scenes.ContentNodes, "TileMap/dungeon_tile_map.tscn"),
         Managers.Instance);
+        //DungeonTM.Name = "DungeonTM";
+        TileSize = DungeonTM.TileSet.TileSize.X;
+        TileSizeVector = DungeonTM.TileSet.TileSize;
+        DungeonTM.RenderingQuadrantSize = TileSize;
     }
 }
 
