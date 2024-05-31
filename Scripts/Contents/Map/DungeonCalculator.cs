@@ -56,7 +56,7 @@ public partial class DungeonCalculator : Node
         //generating room
         for (int i = 0; i < GenerateRoomCount; i++)
         {
-            Godot.Vector2I pos = GetRandomPointInEllipse(DungeonSize);
+            Godot.Vector2 pos = Utils.GetRandomPointInEllipse(DungeonSize);
             var room = GenerateRoomRandomSizedAt(pos);
             _rooms.Add(room);
             room.RoomArrangementCompleteAction += OnRoomArragementCompleted;
@@ -165,24 +165,6 @@ public partial class DungeonCalculator : Node
 
         return groupRoom[true];
     }
-
-    #region Math
-    Godot.Vector2I GetRandomPointInCircle(int radius)
-    {
-        return GetRandomPointInEllipse(new Godot.Vector2I(radius, radius));
-    }
-
-    Godot.Vector2I GetRandomPointInEllipse(Godot.Vector2I size)
-    {
-        float theta = 2 * Mathf.Pi * Managers.Random.Randf();
-        float u = Managers.Random.Randf() + Managers.Random.Randf();
-        float r = u > 1 ? 2 - u : u;
-
-        int x = Utils.RoundTileSize(size.X * r * Mathf.Cos(theta));
-        int y = Utils.RoundTileSize(size.Y * r * Mathf.Sin(theta));
-        return new Godot.Vector2I(x, y);
-    }
-    #endregion
 
 }
 

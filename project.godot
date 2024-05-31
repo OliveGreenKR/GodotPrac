@@ -21,8 +21,10 @@ Managers="*res://addons/myengine_2d/Core/Managers/Managers.cs"
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/viewport_width=480
+window/size/viewport_height=720
+window/size/window_width_override=1920
+window/size/window_height_override=1080
 
 [dotnet]
 
@@ -42,5 +44,6 @@ enabled=PackedStringArray("res://addons/2d_shapes/plugin.cfg", "res://addons/Ase
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
 environment/defaults/default_clear_color=Color(0.122252, 0.122252, 0.122252, 1)

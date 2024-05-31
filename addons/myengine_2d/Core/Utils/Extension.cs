@@ -207,20 +207,10 @@ public static class Extension
 
 
     #region Vector
-    /// <summary>
-    ///  return normalized dominant factor
-    /// </summary>
-    public static Vector2 GetDominantFactor(this Vector2 vector)
+
+    public static Vector2I RoundInt(this Vector2 vector, int size)
     {
-        if(vector.Aspect() > 1f)
-        {
-            //left,right
-            return (vector.Dot(Vector2.Right) * Vector2.Right).Normalized();
-        }
-        else
-        {
-            return (vector.Dot(Vector2.Down) * Vector2.Down).Normalized();
-        }
+        return new Vector2I(Utils.RoundIntSize(vector.X, size), Utils.RoundIntSize((float)vector.Y, size));
     }
 
     public static Vector2I ToVector2I(this Vector2 vector)
@@ -241,59 +231,59 @@ public static class Extension
 
     #region CollisionShape2D
 
-    public Corner GetIntersectionCorner(this CollisionShape2D collision, Vector2 direction)
-    {
-        RectangleShape2D shape =  collision.Shape as RectangleShape2D;
+    //public Corner GetIntersectionCorner(this CollisionShape2D collision, Vector2 direction)
+    //{
+    //    RectangleShape2D shape =  collision.Shape as RectangleShape2D;
 
-        Vector2 center = collision.GlobalPosition;
-        float width = shape.Size.X;
-        float height = shape.Size.Y;
+    //    Vector2 center = collision.GlobalPosition;
+    //    float width = shape.Size.X;
+    //    float height = shape.Size.Y;
 
-        // Calculate the intersection point of the line with the rectangle
-        Point intersection = GetIntersectionPoint(line, rect);
+    //    // Calculate the intersection point of the line with the rectangle
+    //    Point intersection = GetIntersectionPoint(line, rect);
 
-        // Determine which corner the line intersects
-        if (intersection.X == center.X - width / 2 && intersection.Y == center.Y - height / 2)
-            return Corner.TopLeft;
-        else if (intersection.X == center.X + width / 2 && intersection.Y == center.Y - height / 2)
-            return Corner.TopRight;
-        else if (intersection.X == center.X - width / 2 && intersection.Y == center.Y + height / 2)
-            return Corner.BottomLeft;
-        else if (intersection.X == center.X + width / 2 && intersection.Y == center.Y + height / 2)
-            return Corner.BottomRight;
-        else
-            throw new Exception("Line does not intersect with rectangle");
-    }
+    //    // Determine which corner the line intersects
+    //    if (intersection.X == center.X - width / 2 && intersection.Y == center.Y - height / 2)
+    //        return Corner.TopLeft;
+    //    else if (intersection.X == center.X + width / 2 && intersection.Y == center.Y - height / 2)
+    //        return Corner.TopRight;
+    //    else if (intersection.X == center.X - width / 2 && intersection.Y == center.Y + height / 2)
+    //        return Corner.BottomLeft;
+    //    else if (intersection.X == center.X + width / 2 && intersection.Y == center.Y + height / 2)
+    //        return Corner.BottomRight;
+    //    else
+    //        throw new Exception("Line does not intersect with rectangle");
+    //}
 
-    private static Vector2 GetIntersectionPoint(this CollisionShape2D collision, Define.CollisionShape shapeType, Vector2 direction)
-    {
-        // Calculate the intersection point of the line with the rectangle
-        // This implementation assumes a simple line-rectangle intersection algorithm
-        // You may need to modify this implementation based on your specific requirements
+    //private static Vector2 GetIntersectionPoint(this CollisionShape2D collision, Define.CollisionShape shapeType, Vector2 direction)
+    //{
+    //    // Calculate the intersection point of the line with the rectangle
+    //    // This implementation assumes a simple line-rectangle intersection algorithm
+    //    // You may need to modify this implementation based on your specific requirements
         
-        Vector2 center = collision.GlobalPosition;
+    //    Vector2 center = collision.GlobalPosition;
 
-        switch(shapeType)
-        {
-            case CollisionShape.Circle: 
-            {
+    //    switch(shapeType)
+    //    {
+    //        case CollisionShape.Circle: 
+    //        {
 
-            } break;
-            case CollisionShape.Rect:
-            {
+    //        } break;
+    //        case CollisionShape.Rect:
+    //        {
                 
-            }break;
-            case CollisionShape.Capsule:
-            {
+    //        }break;
+    //        case CollisionShape.Capsule:
+    //        {
 
-            }break;
-        }
-        RectangleShape2D shape = collision.Shape as RectangleShape2D;
+    //        }break;
+    //    }
+    //    RectangleShape2D shape = collision.Shape as RectangleShape2D;
 
         
 
-        return new Vector2 { };
-    }
+    //    return new Vector2 { };
+    //}
 
 
     #endregion
