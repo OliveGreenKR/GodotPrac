@@ -90,8 +90,7 @@ public partial class DungeonCalculator : Node
         {
             DrawEdges(edge, Colors.Green);
 
-            //var roomP = selectedRooms[(edge.P as DelaunatorEx.GridPoint).Index];
-            //roomP.GenerateRandomDoor(edge.ToVector2());
+            //caculating point..?
 
         }
 
@@ -103,7 +102,6 @@ public partial class DungeonCalculator : Node
         if (++_arrangedRoomCount == GenerateRoomCount)
         {
             CalculatingGraph();
-            GD.Print("Calculation!");
         }
     }
 

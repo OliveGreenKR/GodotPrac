@@ -2,6 +2,7 @@ using Define;
 using Godot;
 using Godot.Collections;
 using System;
+using System.Drawing;
 using System.Reflection;
 using System.Text;
 
@@ -236,5 +237,64 @@ public static class Extension
     {
         return new DelaunatorEx.GridPoint { Vector = (Vector2I)vec };
     }
+    #endregion
+
+    #region CollisionShape2D
+
+    public Corner GetIntersectionCorner(this CollisionShape2D collision, Vector2 direction)
+    {
+        RectangleShape2D shape =  collision.Shape as RectangleShape2D;
+
+        Vector2 center = collision.GlobalPosition;
+        float width = shape.Size.X;
+        float height = shape.Size.Y;
+
+        // Calculate the intersection point of the line with the rectangle
+        Point intersection = GetIntersectionPoint(line, rect);
+
+        // Determine which corner the line intersects
+        if (intersection.X == center.X - width / 2 && intersection.Y == center.Y - height / 2)
+            return Corner.TopLeft;
+        else if (intersection.X == center.X + width / 2 && intersection.Y == center.Y - height / 2)
+            return Corner.TopRight;
+        else if (intersection.X == center.X - width / 2 && intersection.Y == center.Y + height / 2)
+            return Corner.BottomLeft;
+        else if (intersection.X == center.X + width / 2 && intersection.Y == center.Y + height / 2)
+            return Corner.BottomRight;
+        else
+            throw new Exception("Line does not intersect with rectangle");
+    }
+
+    private static Vector2 GetIntersectionPoint(this CollisionShape2D collision, Define.CollisionShape shapeType, Vector2 direction)
+    {
+        // Calculate the intersection point of the line with the rectangle
+        // This implementation assumes a simple line-rectangle intersection algorithm
+        // You may need to modify this implementation based on your specific requirements
+        
+        Vector2 center = collision.GlobalPosition;
+
+        switch(shapeType)
+        {
+            case CollisionShape.Circle: 
+            {
+
+            } break;
+            case CollisionShape.Rect:
+            {
+                
+            }break;
+            case CollisionShape.Capsule:
+            {
+
+            }break;
+        }
+        RectangleShape2D shape = collision.Shape as RectangleShape2D;
+
+        
+
+        return new Vector2 { };
+    }
+
+
     #endregion
 }

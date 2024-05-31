@@ -2,6 +2,7 @@ using DelaunatorSharp;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 public class Utils
 {
@@ -21,4 +22,19 @@ public class Utils
     {
         return Mathf.FloorToInt(((n + size - 1) / size) * size);
     }
+
+    /// <summary>
+    ///  get Point on the Line with slope theta passing through Center
+    /// </summary>
+    /// <param name="theta"> relative to x axis</param>
+    /// <returns></returns>
+    public Vector2 GetPointOnLine(Vector2 center, float dx , float theta)
+    {
+        double y = Mathf.Tan(theta) * (dx) + center.Y;
+        double x = center.X + dx;
+        return new Vector2((float)x, (float)y); 
+    }
+
+    
+
 }

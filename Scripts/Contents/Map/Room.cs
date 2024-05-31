@@ -109,9 +109,10 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
     }
 
     /// <param name="direction"> relative  to Room's position </param>
-    public void GenerateRandomDoor(Vector2 direction)
+    public void GenerateRandomDoor(Vector2 position)
     {
-
+        Door door = Door.New(this);
+        door.GlobalPosition = position;
     }
 
   

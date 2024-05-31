@@ -28,3 +28,10 @@ public enum Physics2D : uint
     UI              =  1 << 3,
     DungeonRoom     =  1 << 4,
 }
+
+public enum CollisionShape
+{
+    Circle = 0,
+    Rect,
+    Capsule,
+}
