@@ -91,7 +91,7 @@ public static class Extension
 
     public static T GetOrAddChildByType<T>(this Node parent, bool recursive = true) where T : Node, new()
     {
-        T child = TryGetChildByType<T>(parent, recursive);
+        T child = GetChildByType<T>(parent, recursive);
         if (child != null)
             return child;
         child = new T();
@@ -101,7 +101,7 @@ public static class Extension
 
     public static T GetOrAddChildBySceneType<T>(this Node parent, bool recursive = true) where T : Node
     {
-        T child = TryGetChildByType<T>(parent, recursive);
+        T child = GetChildByType<T>(parent, recursive);
 
         if (child != null)
             return child;
@@ -112,26 +112,26 @@ public static class Extension
         return child;
     }
    
-    /// <summary>
-    /// if object is not valid, return NULL and PushWarning
-    /// </summary>
-    public static T TryGetChildByType<T>(this Node node, bool recursive = true) where T : Node
-    {
-        var obj = GetChildByType<T>(node, recursive);
-        if (obj == null)
-            GD.PushWarning($"GetChild Failed : {typeof(T).Name}");
-        return obj;
-    }
-    /// <summary>
-    /// if object is not valid, return NULL and PushWarning
-    /// </summary>
-    public static T TryGetParentByType<T>(this Node node) where T : Node
-    {
-        var obj = GetParentByType<T>(node);
-        if (obj == null)
-            GD.PushWarning($"GetParent Failed : {typeof(T).Name}");
-        return obj;
-    }
+    ///// <summary>
+    ///// if object is not valid, return NULL and PushWarning
+    ///// </summary>
+    //public static T TryGetChildByType<T>(this Node node, bool recursive = true) where T : Node
+    //{
+    //    var obj = GetChildByType<T>(node, recursive);
+    //    if (obj == null)
+    //        GD.PushWarning($"GetChild Failed : {typeof(T).Name}");
+    //    return obj;
+    //}
+    ///// <summary>
+    ///// if object is not valid, return NULL and PushWarning
+    ///// </summary>
+    //public static T TryGetParentByType<T>(this Node node) where T : Node
+    //{
+    //    var obj = GetParentByType<T>(node);
+    //    if (obj == null)
+    //        GD.PushWarning($"GetParent Failed : {typeof(T).Name}");
+    //    return obj;
+    //}
 
     public static Array<Node> GetChildrenByType<T>(this Node node, bool recursive = true) where T : Node
     {

@@ -37,7 +37,8 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
             _size = value;
             var rect = new RectangleShape2D();
             rect.Size = value;
-            this.GetChildByType<CollisionShape2D>().Shape = rect;
+            //this.GetChildByType<CollisionShape2D>().Shape = rect;
+            this.GetOrAddChildByType<CollisionShape2D>().Shape = rect;
         }
     }
     [Export]

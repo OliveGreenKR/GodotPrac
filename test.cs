@@ -43,9 +43,12 @@ public partial class Test : Node2D
 
     Room GenerateRoomAt(Godot.Vector2 position, Vector2I size)
     {
-        Room room = Room.New(this);
+        //Room room = Room.New(this);
+        Room room = new Room();
         room.GlobalPosition = position;
         room.Size = size;
+
+        AddChild(room);
         return room;
     }
 
