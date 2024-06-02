@@ -2,7 +2,7 @@ using DelaunatorSharp;
 using Godot;
 using System;
 
-public partial class Room : RigidBody2D, IPackedSceneNode<Room>
+public partial class Room : RigidBody2D, IPackedSceneNode<Room>, INewableNode
 {
     public Action RoomArrangementCompleteAction = () => { };
 
@@ -26,6 +26,21 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         return room;
     }
 
+    public Room()
+    {
+        //rigid body setting
+        CanSleep = true;
+        LockRotation = true;
+        GravityScale = 0;
+       
+        CollisionLayer = (int)Define.Physics2D.DungeonRoom;
+        CollisionMask = 0;
+        //collisionshape
+        var collision = this.GetOrAddChildByType<CollisionShape2D>();
+        collision.Shape = new RectangleShape2D();
+
+    }
+
     public bool IsSelected { get; set; } = false;
 
     [Export]
@@ -35,10 +50,9 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         set
         {
             _size = value;
-            var rect = new RectangleShape2D();
-            rect.Size = value;
-            //this.GetChildByType<CollisionShape2D>().Shape = rect;
-            this.GetOrAddChildByType<CollisionShape2D>().Shape = rect;
+            var shape = this.GetOrAddChildByType<CollisionShape2D>().Shape as RectangleShape2D;
+            shape.Size = value;
+            GD.Print(shape.Size);
         }
     }
     [Export]
@@ -53,8 +67,10 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         }
     }
 
+
     public override void _Ready()
     {
+        
         DungeonCalculator.DungeonCalculationCompleteAction -= OnDungeonCompleted;
         DungeonCalculator.DungeonCalculationCompleteAction += OnDungeonCompleted;
     }
@@ -116,6 +132,5 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>
         door.GlobalPosition = position;
     }
 
-  
-
+    
 }
