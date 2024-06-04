@@ -1,0 +1,46 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Prac"
+run/main_scene="res://Scenes/Map/dungeon_builder.tscn"
+config/features=PackedStringArray("4.2", "C#", "Mobile")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Managers="*res://addons/myengine_2d/Core/Managers/Managers.cs"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+
+[dotnet]
+
+project/assembly_name="Prac"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/2d_shapes/plugin.cfg", "res://addons/AsepriteWizard/plugin.cfg", "res://addons/myengine_2d/plugin.cfg")
+
+[layer_names]
+
+2d_physics/layer_1="Player"
+2d_physics/layer_2="Monster"
+2d_physics/layer_3="Attack"
+2d_physics/layer_4="UI"
+2d_physics/layer_5="DungeonRoom"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.122252, 0.122252, 0.122252, 1)

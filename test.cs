@@ -47,8 +47,9 @@ public partial class Test : Node2D
         Room room = new Room();
         room.GlobalPosition = position;
         room.Size = size;
+        GD.Print($"roomsize : {size}");
 
-        AddChild(room);
+        AddChild(room,true);
         return room;
     }
 
