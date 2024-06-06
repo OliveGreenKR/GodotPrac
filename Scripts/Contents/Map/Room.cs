@@ -13,9 +13,12 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>, INewableNode
     Vector2 _position;
 
     static PackedScene _scene = Managers.Resource.LoadPackedScene<Room>(Define.Scenes.ContentNodes, "Map/room.tscn");
-    static public PackedScene PackedScene => _scene;
+    static public PackedScene PackedScene {get{return _scene;}}
 
-    static public Room New(Node parent = null) { return Managers.Resource.Instantiate<Room>(_scene, parent); }
+    static public Room New(Node parent = null) 
+    { 
+        return Managers.Resource.Instantiate<Room>(_scene, parent); 
+    }
 
     public static Room New(Vector2I size, Define.RoomTypes type = Define.RoomTypes.Basic)
     {
@@ -34,7 +37,7 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>, INewableNode
         GravityScale = 0;
        
         CollisionLayer = (int)Define.Physics2D.DungeonRoom;
-        CollisionMask = 0;
+        CollisionMask = (int)Define.Physics2D.DungeonRoom; 
         //collisionshape
         var collision = this.GetOrAddChildByType<CollisionShape2D>();
         collision.Shape = new RectangleShape2D();
@@ -52,7 +55,6 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>, INewableNode
             _size = value;
             var shape = this.GetOrAddChildByType<CollisionShape2D>().Shape as RectangleShape2D;
             shape.Size = value;
-            GD.Print(shape.Size);
         }
     }
     [Export]
@@ -88,7 +90,6 @@ public partial class Room : RigidBody2D, IPackedSceneNode<Room>, INewableNode
             this.Freeze = true;
             GeneratingWithRoomTypes();
         }
-
     }
 
     public override void _PhysicsProcess(double delta)

@@ -6,3 +6,5 @@
 script = ExtResource("1_fjpxg")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Node" type="Node" parent="."]

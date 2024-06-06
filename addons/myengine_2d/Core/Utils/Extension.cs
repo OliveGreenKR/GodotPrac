@@ -207,6 +207,11 @@ public static class Extension
 
     #region Vector
 
+    public static bool Or(this Vector2I v1, Vector2I v2)
+    {
+        return v1.X == v2.X || v1.Y == v2.Y;
+    }
+
     public static Vector2I RoundInt(this Vector2 vector, int size)
     {
         return new Vector2I(Utils.RoundIntSize(vector.X, size), Utils.RoundIntSize((float)vector.Y, size));

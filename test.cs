@@ -5,33 +5,21 @@ public partial class Test : Node2D
 {
     static TileMap TM = Managers.Tile.DungeonTM;
 
-
+    int GenerateRoomCount = 40;
+    Vector2I DungeonSize =  new Vector2I(500,500);
+    Vector2I minRoomSize =  new Vector2I(4,5);
+    Vector2I maxRoomSize =  new Vector2I(12,12);
     public override void _Ready()
 	{
-        Vector2 viewport =  GetViewport().GetVisibleRect().Size;
-        GD.Print(viewport);
 
-        var pos = GlobalPosition;
-        var size = new Vector2I(10, 10) * TM.TileSet.TileSize.X;
-
-        Room room = GenerateRoomAt(pos,size);
-
-        var topleft = (room.GlobalPosition - room.Size/2).ToVector2I();
-        var bottomright = (room.GlobalPosition + room.Size/2).ToVector2I();
-
-        Godot.Collections.Array<Vector2I> cells = new Godot.Collections.Array<Vector2I>();
-
-        for(int x = topleft.X; x < bottomright.X; x+=16)
+        //generating room
+        for (int i = 0; i < 3; i++)
         {
-            for (int y = topleft.X; y < bottomright.X; y+= 16)
-            {
-                cells.Add(
-                    TM.LocalToMap(ToLocal(new Vector2I(x, y)))
-                    );
-            }
+            Vector2 pos = Utils.GetRandomPointInEllipse(DungeonSize);
+            var size = Managers.Random.RandVector(minRoomSize, maxRoomSize) * Managers.Tile.TileSize;
+            var room = GenerateRoomAt(pos,size.ToVector2I());
         }
-        GD.Print(cells.Count);
-        TM.SetCellsTerrainConnect(1, cells, 0, 0);
+
   
 	}
 
@@ -40,6 +28,28 @@ public partial class Test : Node2D
         
     }
 
+    void TilingRoom(Room room)
+    {
+        var topleft = (room.GlobalPosition - room.Size / 2).ToVector2I();
+        var bottomright = (room.GlobalPosition + room.Size / 2).ToVector2I();
+
+        Godot.Collections.Array<Vector2I> cells = new Godot.Collections.Array<Vector2I>();
+
+        for (int x = topleft.X; x < bottomright.X; x += Managers.Tile.TileSize)
+        {
+            for (int y = topleft.X; y < bottomright.X; y += Managers.Tile.TileSize)
+            {
+                cells.Add(
+                    TM.LocalToMap(ToLocal(new Vector2I(x, y)))
+                    );
+            }
+        }
+
+        TM.SetCellsTerrainConnect(1, cells, 0, 0);
+    }
+
+
+
 
     Room GenerateRoomAt(Godot.Vector2 position, Vector2I size)
     {
@@ -47,7 +57,6 @@ public partial class Test : Node2D
         Room room = new Room();
         room.GlobalPosition = position;
         room.Size = size;
-        GD.Print($"roomsize : {size}");
 
         AddChild(room,true);
         return room;

@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
-public partial class DungeonCalculator : Node
+public partial class DungeonCalculator : Node2D
 {
     public static Action DungeonCalculationCompleteAction = () => { };
 
@@ -27,6 +28,7 @@ public partial class DungeonCalculator : Node
     //room
     //Godot.Collections.Dictionary<Define.RoomTypes, Node> _typeRooms = new Godot.Collections.Dictionary<Define.RoomTypes, Node>();
     List<Room> _rooms = new List<Room>();
+    List<Vector2I> _roads = new List<Vector2I>(); 
 
     int _arrangedRoomCount = 0;
 
@@ -86,13 +88,17 @@ public partial class DungeonCalculator : Node
         var selectedEdge = delaunator.MakeMstKruskal(addSomeExtra: true);
 
         //test :make edge to road.
-        foreach (IEdge edge in selectedEdge)
-        {
-            DrawEdges(edge, Colors.Green);
 
-            //caculating point..?
+        //foreach (var room in selectedRooms)
+        //{
+        //    TilingRoom(room);
+        //}
 
-        }
+        //foreach (IEdge edge in selectedEdge)
+        //{
+        //    DrawEdges(edge, Colors.Green);
+        //    TilingEdge(edge);
+        //}
 
         //Invoke
         DungeonCalculationCompleteAction.Invoke();
@@ -104,6 +110,100 @@ public partial class DungeonCalculator : Node
             CalculatingGraph();
         }
     }
+
+    #region TilingCoord
+
+    void TilingRoom(Room room)
+    {
+        var TM = Managers.Tile.DungeonTM;
+
+        var topleft = (room.GlobalPosition - room.Size / 2).ToVector2I();
+        var bottomright = (room.GlobalPosition + room.Size / 2).ToVector2I();
+
+        Array<Vector2I> roomCells = new Array<Vector2I>();
+        Array<Vector2I> wallCells = new Array<Vector2I>();
+
+        var mapTop = TM.LocalToMap(topleft);
+        var mapBottom = TM.LocalToMap(bottomright);
+        for (int x = topleft.X; x < bottomright.X; x += Managers.Tile.TileSize)
+        {
+            for (int y = topleft.X; y < bottomright.X; y += Managers.Tile.TileSize)
+            {
+                var mapCoord = TM.LocalToMap(ToLocal(new Vector2I(x, y)));
+
+                if (mapTop.Or(mapCoord) || mapBottom.Or(mapCoord))
+                {
+                    //wall
+                    wallCells.Add(mapCoord);
+                }
+                else
+                {
+                    //ground
+                    roomCells.Add(mapCoord);
+                }
+
+            }
+        }
+
+        TM.SetCellsTerrainConnect(1, roomCells, 0, 0);
+        TM.SetCellsTerrainConnect(2, wallCells, 0, 2);
+    }
+
+    void TilingEdge(IEdge edge)
+    {
+        var tilesize = Managers.Tile.TileSize;
+
+        var TM = Managers.Tile.DungeonTM;
+        Array<Vector2I> cells = new Array<Vector2I>();
+
+        var p = edge.P.ToVector2();
+        var q = edge.Q.ToVector2();
+
+        var delta = q - p;
+
+        if( delta.X > 0)
+        {
+            for (int i = 0; i < delta.X; i+= tilesize)
+            {
+                //right
+                p += new Vector2(i, 0);
+                cells.Add(TM.LocalToMap(ToLocal(p)));
+            }
+
+        }
+        else if ( delta.X < 0)
+        {
+            for (int i = 0; i < -delta.X; i-= tilesize )
+            {
+                //left
+                p += new Vector2(i, 0);
+                cells.Add(TM.LocalToMap(ToLocal(p)));
+            }
+        }
+
+        if (delta.Y > 0)
+        {
+
+            for (int i = 0; i < delta.Y; i += tilesize)
+            {
+                //up
+                p += new Vector2(0, i);
+                cells.Add(TM.LocalToMap(ToLocal(p)));
+            }
+        }
+        else if( delta.Y < 0)
+        {
+            for (int i = 0; i < -delta.Y; i -= tilesize)
+            {
+                //left
+                p +=  new Vector2(0, i);
+                cells.Add(TM.LocalToMap(ToLocal(p)));
+            }
+        }
+        //road to Layer:Wall(2)
+        TM.SetCellsTerrainConnect(2,cells,0, 1);
+    }
+    #endregion
 
     #region debug-visualization
     void DrawEdges( IEdge edge , Color? color = null)
@@ -127,9 +227,10 @@ public partial class DungeonCalculator : Node
     {
         var size = new Vector2I(Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize),
                                  Managers.Random.RandiRange(MinRoomSize * Managers.Tile.TileSize, MaxRoomSize * Managers.Tile.TileSize));
-        Room room = Room.New(this);
+        Room room = new Room();
         room.GlobalPosition = position;
         room.Size = size;
+        this.AddChild(room,true);
         return room;
     }
 
