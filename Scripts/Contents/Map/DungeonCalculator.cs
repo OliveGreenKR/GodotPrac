@@ -89,16 +89,16 @@ public partial class DungeonCalculator : Node2D
 
         //test :make edge to road.
 
-        //foreach (var room in selectedRooms)
-        //{
-        //    TilingRoom(room);
-        //}
+        foreach (var room in selectedRooms)
+        {
+            TilingRoom(room);
+        }
 
-        //foreach (IEdge edge in selectedEdge)
-        //{
-        //    DrawEdges(edge, Colors.Green);
-        //    TilingEdge(edge);
-        //}
+        foreach (IEdge edge in selectedEdge)
+        {
+            DrawEdges(edge, Colors.Green);
+            //TilingEdge(edge);
+        }
 
         //Invoke
         DungeonCalculationCompleteAction.Invoke();
