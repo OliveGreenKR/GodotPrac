@@ -111,7 +111,7 @@ public partial class DungeonCalculator : Node2D
         }
     }
 
-    #region TilingCoord
+    #region Tiling
 
     void TilingRoom(Room room)
     {

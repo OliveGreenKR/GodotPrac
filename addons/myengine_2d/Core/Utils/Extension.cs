@@ -75,6 +75,12 @@ public static class Extension
     {
         return node.ToSignal(node.GetTree().CreateTimer(timeSec, processAlways, processInPhysics, ignoreTimeScale), SceneTreeTimer.SignalName.Timeout);
     }
+
+    public static SceneTreeTimer AddSceneTreeTimer(this Node node, double timeSec, bool processAlways = true, bool processInPhysics = false, bool ignoreTimeScale = false)
+    {
+        return node.GetTree().CreateTimer(timeSec, processAlways, processInPhysics, ignoreTimeScale);
+    }
+
     /// <summary>
     ///  Find or Add this Node's child with name.
     /// </summary>
@@ -220,6 +226,11 @@ public static class Extension
     public static Vector2I ToVector2I(this Vector2 vector)
     {
         return new Vector2I((int)vector.X, (int)vector.Y);
+    }
+
+    public static Vector2 ToVector2(this Vector2I vector)
+    {
+        return new Vector2(vector.X, vector.Y);
     }
 
     public static Vector3I ToVector3I(this Vector3 vector)

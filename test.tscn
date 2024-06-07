@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://81qcl1hoogbi"]
+[gd_scene load_steps=3 format=3 uid="uid://81qcl1hoogbi"]
 
 [ext_resource type="Script" path="res://Test.cs" id="1_fjpxg"]
+[ext_resource type="Texture2D" uid="uid://mw18mfmvt6hm" path="res://icon.svg" id="2_7m6ki"]
 
 [node name="Test" type="Node2D"]
 script = ExtResource("1_fjpxg")
@@ -8,3 +9,7 @@ script = ExtResource("1_fjpxg")
 [node name="Node" type="Node" parent="."]
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.195313, 0.195313)
+texture = ExtResource("2_7m6ki")

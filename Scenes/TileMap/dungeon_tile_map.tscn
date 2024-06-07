@@ -8,6 +8,7 @@ rendering_quadrant_size = 32
 format = 2
 layer_0/name = "BackGround"
 layer_0/navigation_enabled = false
+layer_0/tile_data = PackedInt32Array(4456406, 196608, 3)
 layer_1/name = "Ground"
 layer_1/tile_data = PackedInt32Array()
 layer_2/name = "Wall"
